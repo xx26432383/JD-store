@@ -31,7 +31,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="所在区" prop="countyNo">
-        <el-select clearable v-model="formData.countyNo"  @change="getcoutryData">
+        <el-select clearable v-model="formData.countyNo">
           <el-option
             v-for="(item, index) in regionOptions"
             :key="index"
@@ -114,7 +114,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="所在区域" prop="countyNo">
-              <el-select v-model="dialogFormData.countyNo" :disabled="this.dialogType === 'detail'"   @change="getcoutryData">
+              <el-select v-model="dialogFormData.countyNo" :disabled="this.dialogType === 'detail'" >
                 <el-option
                   v-for="(item, index) in dialogRegionOptions"
                   :key="index"
@@ -162,7 +162,9 @@ export default {
       regionOptions: [],
       dialogRegionOptions: [],
       dialogType: 'add',
-      formData: {},
+      formData: {
+        cityNo: ''
+      },
       dialogFormData: {},
       dialogVisible: false,
       dialogTitle: '新增门店',
@@ -187,7 +189,7 @@ export default {
             this.dialogVisible = true
             this.dialogType = 'detail'
             this.dialogTitle = '查看司机详情'
-            req('', {driverCode: this.tableSelectRows[0].driverCode}).then(data => {
+            req('listStores', {storesCode: this.tableSelectRows[0].storesCode}).then(data => {
               Promise.all([
                 this.getCityData(data.data.provincesNo),
                 this.getRegionData(data.data.cityNo)
@@ -224,7 +226,7 @@ export default {
             this.dialogVisible = true
             this.dialogType = 'edit'
             this.dialogTitle = '修改门店'
-            req('', {driverCode: this.tableSelectRows[0].driverCode}).then(data => {
+            req('', {storesCode: this.tableSelectRows[0].storesCode}).then(data => {
               Promise.all([
                 this.getCityData(data.data.provincesNo),
                 this.getRegionData(data.data.cityNo)
@@ -248,10 +250,10 @@ export default {
 
             this.$confirm('此操作将永久删除该文件,是否继续?').then(() => {
               let ids = this.tableSelectRows.map(item => {
-                return item.driverCode
+                return item.storesCode
               }).toString()
 
-              req('deleteStores', {driverCode: ids}).then(data => {
+              req('deleteStores', {storesCode: ids}).then(data => {
                 this.$message.success(data.msg)
 
                 this.fetch()
@@ -318,40 +320,40 @@ export default {
       console.log('getCityData', data)
       let code = data
       req('findCity', {
-        ...this.citiesData,
         provincesNo: code
       }).then(data => {
-        console.log('城市', data)
+        console.log('市', data)
         this.cityOptions = data.data
         this.dialogCityOptions = data.data
+        this.formData.cityNo = ''
+        this.formData.countyNo = ''
       })
     },
     getRegionData (data) {
       console.log('getRegionData', data)
       let code1 = data
-      req('findCity', {
-        ...this.citiesData,
-        provincesNo: code1,
-        cityNo: code1
-      }).then(data => {
-        console.log('市', data)
-        this.regionOptions = data.data
-        this.dialogRegionOptions = data.data
-      })
-    },
-    getcoutryData (data) {
-      console.log('findCounty', data)
-      let code1 = data
       req('findCounty', {
-        ...this.citiesData,
-        provincesNo: code1,
         cityNo: code1
       }).then(data => {
         console.log('区', data)
         this.regionOptions = data.data
         this.dialogRegionOptions = data.data
+        this.formData.countyNo = ''
       })
     },
+    // getcoutryData (data) {
+    //   console.log('findCounty', data)
+    //   let code1 = data
+    //   req('findCounty', {
+    //     ...this.citiesData,
+    //     provincesNo: code1,
+    //     cityNo: code1
+    //   }).then(data => {
+    //     console.log('区', data)
+    //     this.regionOptions = data.data
+    //     this.dialogRegionOptions = data.data
+    //   })
+    // },
 
     fetch () {
       this.pageInfo.pageSize = 5
@@ -440,6 +442,17 @@ export default {
           return false
         }
       })
+    },
+    validateIdCard (rule, value, callback) {
+      let reg = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/
+
+      console.log(reg.test(value))
+
+      if (!reg.test(value)) {
+        callback(new Error('请输入正确的身份证号'))
+      } else {
+        callback()
+      }
     }
   }
 }

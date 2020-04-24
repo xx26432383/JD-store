@@ -133,8 +133,8 @@ export default {
       data: [
       ],
       defaultProps: {
-        children: 'secondGoodsLevelList',
-        label: 'label'
+        children: 'secondGoodsLevel',
+        label: 'levelName'
       },
       dialogFormData: {
         levelName: '',
@@ -163,6 +163,7 @@ export default {
         // this.data = this.initData(data.data)
         if (data.code === 0) {
           this.$message.success('刷新成功！')
+          this.data = data.data.list
         }
       })
     },

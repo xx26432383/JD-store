@@ -28,7 +28,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="所在区" prop="countyNo">
-        <el-select clearable v-model="formData.countyNo"  @change="getcoutryData">
+        <el-select clearable v-model="formData.countyNo">
           <el-option
             v-for="(item, index) in regionOptions"
             :key="index"
@@ -67,33 +67,33 @@
       <el-form :model="dialogFormData" ref="form" :rules="formRules" label-width="100px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="司机姓名" prop="driverName" :disabled="this.dialogType === 'detail'">
+            <el-form-item label="司机姓名" prop="driverName">
               <el-input v-model="dialogFormData.driverName"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="联系电话" prop="phone" :disabled="this.dialogType === 'detail'">
+            <el-form-item label="联系电话" prop="phone">
               <el-input v-model.number="dialogFormData.phone"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="司机账号" prop="driverAcct" :disabled="this.dialogType === 'detail'">
+            <el-form-item label="司机账号" prop="driverAcct">
               <el-input v-model="dialogFormData.driverAcct"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="密码" prop="driverPwd" :disabled="this.dialogType === 'detail'">
+            <el-form-item label="密码" prop="driverPwd">
               <el-input v-model="dialogFormData.driverPwd"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="身份证号" prop="idCard" :disabled="this.dialogType === 'detail'">
+            <el-form-item label="身份证号" prop="idCard">
               <el-input v-model="dialogFormData.idCard"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span='12'>
             <el-form-item label="所在省份" prop="provincesNo">
-              <el-select v-model="dialogFormData.provincesNo" :disabled="this.dialogType === 'detail'" @change="getCityData">
+              <el-select v-model="dialogFormData.provincesNo" @change="getCityData">
                 <el-option
                   v-for="(item, index) in dialogProvinceOptions"
                   :key="index"
@@ -105,7 +105,7 @@
           </el-col>
           <el-col :span='12'>
             <el-form-item label="所在城市" prop="cityNo">
-              <el-select v-model="dialogFormData.cityNo" :disabled="this.dialogType === 'detail'" @change="getRegionData">
+              <el-select v-model="dialogFormData.cityNo" @change="getRegionData">
                 <el-option
                   v-for="(item, index) in dialogCityOptions"
                   :key="index"
@@ -117,7 +117,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="所在区域" prop="countyNo">
-              <el-select v-model="dialogFormData.countyNo" :disabled="this.dialogType === 'detail'"   @change="getcoutryData">
+              <el-select v-model="dialogFormData.countyNo">
                 <el-option
                   v-for="(item, index) in dialogRegionOptions"
                   :key="index"
@@ -315,38 +315,25 @@ export default {
       console.log('getCityData', data)
       let code = data
       req('findCity', {
-        ...this.citiesData,
         provincesNo: code
       }).then(data => {
-        console.log('城市', data)
+        console.log('市', data)
         this.cityOptions = data.data
         this.dialogCityOptions = data.data
+        this.formData.cityNo = ''
+        this.formData.countyNo = ''
       })
     },
     getRegionData (data) {
       console.log('getRegionData', data)
       let code1 = data
-      req('findCity', {
-        ...this.citiesData,
-        provincesNo: code1,
-        cityNo: code1
-      }).then(data => {
-        console.log('市', data)
-        this.regionOptions = data.data
-        this.dialogRegionOptions = data.data
-      })
-    },
-    getcoutryData (data) {
-      console.log('findCounty', data)
-      let code1 = data
       req('findCounty', {
-        ...this.citiesData,
-        provincesNo: code1,
         cityNo: code1
       }).then(data => {
         console.log('区', data)
         this.regionOptions = data.data
         this.dialogRegionOptions = data.data
+        this.formData.countyNo = ''
       })
     },
 

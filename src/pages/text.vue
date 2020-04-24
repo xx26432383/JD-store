@@ -21,8 +21,8 @@
       <el-container>
         <el-aside width="200px">
           <el-menu @select="handlerSelect">
-            <el-menu-item v-for="item in menuList" :index="item.menuUrl" :key="item.menuCode">
-              <span slot="title">{{item.menuName}}</span>
+            <el-menu-item v-for="item in menuList" :index="item.path" :key="item.path">
+              <span slot="title">{{item.title}}</span>
             </el-menu-item>
           </el-menu>
         </el-aside>
@@ -36,13 +36,13 @@
 </template>
 
 <script>
-import req from '@/api/menu-manage.js'
+// import req from '@/api/menu-manage.js'
 export default {
   name: 'home',
   data () {
     return {
       menuList: [
-        /* {title: '用户管理', path: '/user-manage'},
+        {title: '用户管理', path: '/user-manage'},
         {title: '菜单管理', path: '/menu-manage'},
         {title: '商品管理', path: '/comm-manage'},
         {title: '首页轮播图管理', path: '/home-pic-manage'},
@@ -51,7 +51,7 @@ export default {
         {title: '订单管理', path: '/order-manage'},
         {title: '热门位商品管理', path: '/hot-comm-manage'},
         {title: '门店信息管理', path: '/shop-info-manage'},
-        {title: '司机信息管理', path: '/driver-info-manage'} */
+        {title: '司机信息管理', path: '/driver-info-manage'}
       ],
       visible: false
     }
@@ -72,10 +72,10 @@ export default {
       }
     },
     getMenu () {
-      req('listMenu', {role: JSON.parse(sessionStorage.getItem('roleInfo')).role}).then(data => {
-        console.log(data)
-        this.menuList = data.data
-      })
+      // req('listMenu', {role: JSON.parse(sessionStorage.getItem('roleInfo')).role}).then(data => {
+      //   console.log(data)
+      //   this.menuList = data.data
+      // })
     },
     signOut () {
       sessionStorage.clear('userInfo')

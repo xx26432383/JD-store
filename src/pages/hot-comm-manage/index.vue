@@ -191,7 +191,7 @@ export default {
           func: () => {
             this.dialogVisibleShowHot = true
             req('findNum', {}).then(data => {
-              this.hotDialogFormData = data.data
+              this.formDataShowHot = data.data
             })
           }
         }
