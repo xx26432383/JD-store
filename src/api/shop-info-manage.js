@@ -9,7 +9,12 @@ const config = {
   //     fileName: '销售激励报表'
   //   }
   // },
+
   getTableData: {
+    url: '/pc/stores/listStores',
+    method: 'post'
+  },
+  listStores: {
     url: '/pc/stores/listStores',
     method: 'post'
   },
