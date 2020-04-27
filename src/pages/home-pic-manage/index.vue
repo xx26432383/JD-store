@@ -364,7 +364,7 @@ export default {
       }
     },
     watchImg (data) {
-      window.open(data.slideshowPath)
+      window.open(data.imageUrl)
     },
     filterDist (value, item) {
       if (item.distName) {

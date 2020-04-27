@@ -70,7 +70,6 @@ export default {
         {label: '手机', prop: 'phone'},
         {label: '客户邮箱', prop: 'email'},
         {label: '身份证', prop: 'idCard'},
-        {label: '角色', prop: 'role', distName: 'roleList'},
         {label: '客户编号', prop: 'userCode'}
       ],
       tableData: [],

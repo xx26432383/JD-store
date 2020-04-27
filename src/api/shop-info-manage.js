@@ -14,8 +14,8 @@ const config = {
     url: '/pc/stores/listStores',
     method: 'post'
   },
-  listStores: {
-    url: '/pc/stores/listStores',
+  findStoresById: {
+    url: '/pc/stores/findStoresById',
     method: 'post'
   },
   addStores: {

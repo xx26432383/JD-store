@@ -2,6 +2,7 @@
 .el-form {
   .el-form-item {
     .el-form-item__content {
+      width: 210px;
       .el-select {
         width: 100%;
       }
@@ -39,6 +40,7 @@
 
 // 修改按钮公共样式
 .el-button {
+  margin: 0px 10px;
   padding: 0 15px;
   border-radius: 0;
   height: 30px;

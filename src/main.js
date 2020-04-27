@@ -22,11 +22,11 @@ new Vue({
   template: '<App/>'
 })
 
-router.beforeEach((to, from, next) => {
-  let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
-  if (userInfo && userInfo.access_token) {
-    next()
-  } else {
-    next('/login')
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+//   if (userInfo && userInfo.access_token) {
+//     next()
+//   } else {
+//     next('/login')
+//   }
+// })

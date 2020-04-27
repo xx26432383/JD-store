@@ -4,61 +4,66 @@
       <el-form-item label="商品名称" prop="goodsName">
         <el-input v-model="formData.goodsName"></el-input>
       </el-form-item>
-      <el-form-item label="商品名称" prop="userName">
-        <el-input v-model="formData.userName"></el-input>
+      <el-form-item label="广告词" prop="advertisement">
+        <el-input v-model="formData.advertisement"></el-input>
+      </el-form-item>
+      <el-form-item label="作者" prop="write">
+        <el-input v-model="formData.write"></el-input>
       </el-form-item>
       <el-form-item label="商品状态" prop="gooodsStats">
-        <el-select v-model="formData.gooodsStats">
+        <el-select clearable v-model="formData.gooodsStats">
           <el-option
-          v-for="(item, index) in options"
-          :key="index"
-          :label="item.label"
-          :value="item.value">
+            v-for="(item, index) in goodsStateOptions"
+            :key="index"
+            :label="item.label"
+            :value="item.value">
           </el-option>
         </el-select>
       </el-form-item>
     </i-search>
 
-    <!-- <el-button @click="test">click</el-button> -->
-
     <i-table
-    :toolbar="toolbar"
-    :tableData="tableData"
-    :pageInfo="pageInfo"
-    :selectionShow="true"
-    @handleSizeChange="handleSizeChange"
-    @handleCurrentChange="handleCurrentChange"
-    @selection-change="handleSelectionChange">
+      :toolbar="toolbar"
+      :tableData="tableData"
+      :pageInfo="pageInfo"
+      :selectionShow="true"
+      v-loading="tableLoading"
+      @handleSizeChange="handleSizeChange"
+      @handleCurrentChange="handleCurrentChange"
+      @selection-change="handleSelectionChange">
       <el-table-column
-      v-for="(item, index) in columnList"
-      :key="index"
-      :label="item.label"
-      :prop="item.prop"
-      align="center"
-      :formatter="columnFormatter">
+        v-for="(item, index) in columnList"
+        :key="index"
+        :label="item.label"
+        :prop="item.prop"
+        align="center"
+        :width="item.width"
+        :show-overflow-tooltip="true"
+        :formatter="columnFormatter">
       </el-table-column>
     </i-table>
 
-    <i-dialog v-model="dialogVisible"
+    <i-dialog
+      v-model="dialogVisible"
       :title="dialogTitle"
+      @dialog-before-close="dialogBeforeClose"
       @dialog-cancel="dialogCancel"
-      @dialog-confirm="dialogConfirm"
-      @dialog-before-close="dialogBeforeClose">
+      @dialog-confirm="dialogConfirm">
       <el-form :model="dialogFormData" ref="form" :rules="formRules" label-width="100px">
         <el-row>
-          <el-col :span="12">
+          <el-col :span='12'>
             <el-form-item label="商品名称" prop="goodsName">
               <el-input v-model="dialogFormData.goodsName" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span='12'>
             <el-form-item label="书号" prop="bookId">
               <el-input v-model="dialogFormData.bookId" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span='12'>
             <el-form-item label="一级分类" prop="firstLevelCode">
-            <el-select v-model="dialogFormData.firstLevelCode"
+              <el-select v-model="dialogFormData.firstLevelCode"
               @focus="getFirstSortCode"
               placeholder="请选择" width="206px"
               @change="getSecondSortCode(dialogFormData.firstLevelCode)">
@@ -68,32 +73,32 @@
                 :value="item.levelCode">
               </el-option>
             </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="11">
-          <el-form-item label="二级分类" prop="secondLevelCode">
-            <el-select v-model="dialogFormData.secondLevelCode" placeholder="请选择" width="206px">
+            </el-form-item>
+          </el-col>
+          <el-col :span='12'>
+            <el-form-item label="二级分类" prop="secondLevelCode">
+              <el-select v-model="dialogFormData.secondLevelCode" placeholder="请选择" width="206px">
               <el-option v-for="(item, index) in secondLevelList"
                 :key="index"
                 :label="item.levelName"
                 :value="item.levelCode">
               </el-option>
             </el-select>
-          </el-form-item>
-        </el-col>
-          <el-col :span="12">
-            <el-form-item label="广告词" prop="advertisement">
-              <el-input type="textarea" v-model="dialogFormData.advertisement" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span='12'>
+            <el-form-item label="广告词" prop="advertisement">
+              <el-input v-model="dialogFormData.advertisement" placeholder="请输入"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span='12'>
             <el-form-item label="商品介绍" prop="goodsNotes">
-              <el-input type="textarea" v-model="dialogFormData.goodsNotes" placeholder="请输入"></el-input>
+              <el-input v-model="dialogFormData.goodsNotes" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="商家名" prop="shopName">
-              <el-input v-model="dialogFormData.shopName" placeholder="请输入"></el-input>
+              <el-input v-mode="dialogFormData.shopName" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -103,12 +108,12 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="成本价" prop="costPrice">
-              <el-input v-model.number="dialogFormData.costPrice" placeholder="请输入"></el-input>
+              <el-input v-model="dialogFormData.costPrice" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="售价" prop="price">
-              <el-input v-model.number="dialogFormData.price" placeholder="请输入"></el-input>
+              <el-input v-model="dialogFormData.price" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -140,13 +145,19 @@ export default {
   data () {
     return {
       dialogType: 'add',
+      tableLoading: false,
       formData: {
         goodsName: '',
-        advertisement: ''
+        advertisement: '',
+        write: ''
       },
+      commCode: '',
+      clickSortCode: '',
+      firstLevelList: [],
+      secondLevelList: [],
       dialogFormData: {
         goodsName: '',
-        bookCode: '',
+        bookId: '',
         firstLevelCode: '',
         secondLevelCode: '',
         advertisement: '',
@@ -157,23 +168,11 @@ export default {
         price: '',
         goodsImage: ''
       },
-      options: [
-        // {label: '全部', value: 0},
-        {label: '上架', value: 0},
-        {label: '下架', value: 1}
-      ],
-      firstLevelList: [
-      ],
-      secondLevelList: [
-      ],
-      commCode: '',
-      commVersion: '',
-      clickSortCode: '',
       dialogVisible: false,
-      dialogTitle: '新增用户',
+      dialogTitle: '新增商品',
       pageInfo: {
         pageNum: 1,
-        pageSize: 1,
+        pageSize: 5,
         total: 0
       },
       toolbar: [
@@ -183,25 +182,44 @@ export default {
           func: () => {
             this.dialogVisible = true
             this.dialogType = 'add'
+            this.dialogTitle = '新增商品'
           }
         },
         {
           btnName: '修改',
           type: 'primary',
           func: () => {
+            // if (this.tableSelectRows.length === 0) {
+            //   this.$message.error('请勾选一个需要修改的商品！')
+            // } else if (this.tableSelectRows.length === 1) {
+            //   this.dialogTitle = '修改商品信息'
+            //   this.dialogType = 'edit'
+            //   this.dialogVisible = true
+            //   this.commCode = this.tableSelectRows[0].goodsCode
+            //   // console.log(this.commCode)
+            //   // console.log(this.commVersion)
+            //   this.getCommData()
+            // } else {
+            //   this.$message.error('一次只能勾选一个需要修改的商品！')
+            // }
             if (this.tableSelectRows.length === 0) {
-              this.$message.error('请勾选一个需要修改的商品！')
-            } else if (this.tableSelectRows.length === 1) {
-              this.dialogTitle = '修改商品信息'
-              this.dialogType = 'edit'
-              this.dialogVisible = true
-              this.commCode = this.tableSelectRows[0].goodsCode
-              // console.log(this.commCode)
-              // console.log(this.commVersion)
-              this.getCommData()
-            } else {
-              this.$message.error('一次只能勾选一个需要修改的商品！')
+              this.$message.info('请选择需要修改的数据')
+              return
             }
+            if (this.tableSelectRows.length > 1) {
+              this.$message.info('当前不支持批量修改数据')
+              return
+            }
+            this.dialogVisible = true
+            this.dialogType = 'edit'
+            this.dialogTitle = '修改商品'
+            req('getGoodsDetailData', {goodsCode: this.tableSelectRows[0].goodsCode}).then(data => {
+              this.dialogFormData = Object.assign({}, data.data, {
+                imagePath: data.data.goodsImagePath
+              })
+
+              console.log(this.dialogFormData)
+            })
           }
         },
         {
@@ -209,15 +227,19 @@ export default {
           type: 'primary',
           func: () => {
             if (this.tableSelectRows.length === 0) {
-              this.$message.info('请选择删除的数据')
+              this.$message.info('请选择需要删除的数据')
+
               return
             }
-            this.$confirm('此操作将永久删除文件，是否继续').then(() => {
+
+            this.$confirm('此操作将永久删除该文件,是否继续?').then(() => {
               let ids = this.tableSelectRows.map(item => {
                 return item.goodsCode
               }).toString()
+
               req('deletGoods', {goodsCode: ids}).then(data => {
                 this.$message.success(data.msg)
+
                 this.fetch()
               })
             })
@@ -227,36 +249,28 @@ export default {
           btnName: '上架',
           type: 'primary',
           func: () => {
-            // if (this.tableSelectRows.length === 0) {
-            //   this.$message.info('请选择需要修改的数据')
-            //   return
-            // }
-            // this.$confirm('是否需要将选中的数据进行上架?').then(() => {
-            //   let goodsIds = this.tableSelectRows.map(item => {
-            //     return item.goodsCode
-            //   }).toString()
-            //   let versions = this.tableSelectRows.map(item => {
-            //     return item.version
-            //   }).toString()
-            //   req('upGoods', {
-            //     goodsCode: goodsIds,
-            //     gooodsStats: 0,
-            //     version: versions
-            //   }).then(data => {
-            //     this.$message.success(data.msg)
-            //     this.fetch()
-            //   })
-            // })
             if (this.tableSelectRows.length === 0) {
-              this.$message.info('请选择上架的数据')
+              this.$message.info('请选择需要修改的数据')
+
               return
             }
-            this.$confirm('是否继续').then(() => {
-              let ids = this.tableSelectRows.map(item => {
+
+            this.$confirm('是否需要将选中的数据进行上架?').then(() => {
+              let goodsCodes = this.tableSelectRows.map(item => {
                 return item.goodsCode
               }).toString()
-              req('upGoods', {goodsCode: ids}).then(data => {
+
+              let versions = this.tableSelectRows.map(item => {
+                return item.version
+              }).toString()
+
+              req('upGoods', {
+                goodsCode: goodsCodes,
+                gooodsStats: 1,
+                version: versions
+              }).then(data => {
                 this.$message.success(data.msg)
+
                 this.fetch()
               })
             })
@@ -266,82 +280,39 @@ export default {
           btnName: '下架',
           type: 'primary',
           func: () => {
-            // if (this.tableSelectRows.length === 0) {
-            //   this.$message.info('请选择需要修改的数据')
-            //   return
-            // }
-            // this.$confirm('是否下架?').then(() => {
-            //   let goodsIds = this.tableSelectRows.map(item => {
-            //     return item.goodsCode
-            //   }).toString()
-            //   let userId = this.tableSelectRows.map(item => {
-            //     return item.userId
-            //   }).toString()
-            //   req('downGoods', {
-            //     goodsCode: goodsIds,
-            //     gooodsStats: 1,
-            //     userId: userId
-            //   }).then(data => {
-            //     this.$message.success(data.msg)
-            //     this.fetch()
-            //   })
-            // })
             if (this.tableSelectRows.length === 0) {
-              this.$message.info('请选择下架的数据')
+              this.$message.info('请选择需要修改的数据')
+
               return
             }
-            this.$confirm('是否继续').then(() => {
-              let ids = this.tableSelectRows.map(item => {
+
+            this.$confirm('是否需要将选中的数据进行下架?').then(() => {
+              let goodsCodes = this.tableSelectRows.map(item => {
                 return item.goodsCode
               }).toString()
-              req('downGoods', {goodsCode: ids}).then(data => {
+
+              let versions = this.tableSelectRows.map(item => {
+                return item.version
+              }).toString()
+
+              req('downGoods', {
+                goodsCode: goodsCodes,
+                gooodsStats: 2,
+                version: versions
+              }).then(data => {
                 this.$message.success(data.msg)
+
                 this.fetch()
               })
             })
           }
         }
       ],
-      formRules: {
-        goodsName: [
-          { required: true, message: '请输入', trigger: 'change' }
-        ],
-        bookId: [
-          { required: true, message: '请输入', trigger: 'change' }
-        ],
-        firstLevelCode: [
-          { required: true, message: '请输入', trigger: 'change' }
-        ],
-        secondLevelCode: [
-          { required: true, message: '请输入', trigger: 'change' }
-        ],
-        advertisement: [
-          { required: true, message: '请输入', trigger: 'change' }
-        ],
-        goodsNotes: [
-          { required: true, message: '请输入', trigger: 'change' }
-        ],
-        shopName: [
-          { required: true, message: '请输入', trigger: 'change' }
-        ],
-        stock: [
-          { required: true, message: '请输入', trigger: 'change' }
-        ],
-        costPrice: [
-          { required: true, message: '请输入', trigger: 'change' },
-          { type: 'number', message: '商品库存必须为数字' }
-        ],
-        price: [
-          { required: true, message: '请输入', trigger: 'change' },
-          { type: 'number', message: '商品库存必须为数字' }
-        ],
-        userId: [
-          { required: true, message: '请输入', trigger: 'change' }
-        ]
-        // goodsImage: [
-        //   { required: true, message: '请输入', trigger: 'change' }
-        // ]
-      },
+      goodsStateOptions: [
+        {label: '全部', value: 0},
+        {label: '上架', value: 1},
+        {label: '下架', value: 2}
+      ],
       columnList: [
         {label: '商品名称', prop: 'goodsName'},
         {label: '商品编号', prop: 'goodsCode'},
@@ -351,18 +322,53 @@ export default {
         {label: '商品介绍', prop: 'goodsNotes'},
         {label: '商家名称', prop: 'shopName'},
         {label: '库存', prop: 'stock'},
-        {label: '成本价', prop: 'costPrice'},
+        {label: '成本价', prop: 'costPrice'}, //, distName: 'goodsStateOptions'
         {label: '售价', prop: 'price'},
-        {label: '状态', prop: 'goodsStatus', distName: 'options'},
+        {label: '状态', prop: 'goodsStatus', distName: 'goodsStateOptions'},
         {label: '书号', prop: 'bookId'}
       ],
       tableData: [],
-      tableSelectRows: []
+      tableSelectRows: [],
+      formRules: {
+        goodsName: [
+          { required: true, message: '请输入商品名称', trigger: 'change' }
+        ],
+        bookId: [
+          { required: true, message: '请输入书号', trigger: 'change' }
+        ],
+        firstLevelCode: [
+          { required: true, message: '请选择一级分类', trigger: 'change' }
+        ],
+        secondLevelCode: [
+          { required: true, message: '请选择二级分类', trigger: 'change' }
+        ],
+        advertisement: [
+          { required: true, message: '请输入广告词', trigger: 'change' }
+        ],
+        goodsNotes: [
+          { required: true, message: '请输入商品介绍', trigger: 'change' }
+        ],
+        shopName: [
+          { required: true, message: '请输入商家名', trigger: 'change' }
+        ],
+        stock: [
+          { required: true, message: '请输入库存', trigger: 'change' }
+        ],
+        costPrice: [
+          { required: true, message: '请输入在成本价', trigger: 'change' }
+        ],
+        price: [
+          { required: true, message: '请输入售价', trigger: 'change' }
+        ],
+        goodsImage: [
+          { required: true, message: '请输入图片路径', trigger: 'change' }
+        ]
+      }
     }
   },
   mounted () {
-    this.pageInfo.total = this.tableData.length
     this.fetch()
+    this.search()
   },
   methods: {
     fetch () {
@@ -371,21 +377,26 @@ export default {
       this.search()
     },
     search () {
-      // console.log('搜索按钮被点击了')
-      // console.log(this.formData)
-      // 发送请求
+      this.tableLoading = true
+
       req('getTableData', {
         ...this.formData,
         pageSize: this.pageInfo.pageSize,
         pageNum: this.pageInfo.pageNum
       }).then(data => {
-        console.log(data)
+        this.tableLoading = false
         this.tableData = data.data.list
         this.pageInfo.pageNum = data.data.pageNum
         this.pageInfo.pageSize = data.data.pageSize
         this.pageInfo.total = data.data.total
+      }).catch(() => {
+        this.tableLoading = false
       })
     },
+    reset () {
+      this.fetch()
+    },
+    // 获取分类列表
     getFirstSortCode () {
       req('findFirstLevel', {
       }).then(data => {
@@ -407,16 +418,13 @@ export default {
       })
     },
     // 修改列表时，选中商品，通过商品编号获取此商品的详细信息
-    getCommData () {
-      req('getGoodsDetailData', {
-        goodsCode: this.commCode
-      }).then(data => {
-        this.dialogFormData = Object.assign({}, data.data)
-      })
-    },
-    reset () {
-      this.fetch()
-    },
+    // getCommData () {
+    //   req('getGoodsDetailData', {
+    //     goodsCode: this.commCode
+    //   }).then(data => {
+    //     this.dialogFormData = Object.assign({}, data.data)
+    //   })
+    // },
     handleSizeChange (value) {
       this.pageInfo.pageSize = value
       this.search()
@@ -438,14 +446,13 @@ export default {
       this.dialogVisible = false
     },
     dialogConfirm () {
-      // console.log('dialog确定按钮被点击了')
       this.$refs.form.validate((valid) => {
         if (valid) {
-          // console.log('表单被校验了')
           if (this.dialogType === 'add') {
             req('saveGoods', {...this.dialogFormData}).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)
+
                 this.fetch()
                 this.$refs.form.resetFields()
                 this.dialogVisible = false
@@ -454,17 +461,13 @@ export default {
               }
             })
           } else {
-            req('changeGoods', {
-              ...this.dialogFormData,
-              goodsCode: this.commCode,
-              version: this.commVersion
-            }).then(data => {
-              // this.dialogFormData = Object.assign({}, data.data)
+            req('changeGoods', {...this.dialogFormData, goodsCode: this.commCode}).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)
-                this.dialogVisible = false
+
                 this.fetch()
-                // this.$refs.upload.clearFiles()
+                this.$refs.form.resetFields()
+                this.dialogVisible = false
               } else {
                 this.$message.error(data.msg)
               }
@@ -475,14 +478,13 @@ export default {
         }
       })
     },
+    // 表格表头的循环list变量名一定要是columnList
     columnFormatter (row, column, cellValue, index) {
       let distName = this.columnList.filter(item => {
         return item.prop === column.property
       })[0].distName
 
       if (distName) {
-        // console.log(row[column.property])
-        // console.log(this[distName])
         return this[distName].filter(item => {
           return item.value === row[column.property]
         })[0].label

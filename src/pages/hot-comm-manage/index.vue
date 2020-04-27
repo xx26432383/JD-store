@@ -92,11 +92,13 @@
       @dialog-cancel="dialogCancelShowHot"
       @dialog-comfirm="dialogComfirmShowHot">
       <el-form ref="hotform" :rules="showHotFormRules" label-width="100px">
-        <div>
-          <el-form-item label="展示商品数量" prop="number">
-            <el-input v-model="formDataShowHot.number"></el-input>
-          </el-form-item>
-        </div>
+        <el-row>
+          <el-col :span="19">
+            <el-form-item label="展示商品数量" prop="number">
+              <el-input v-model.number="formDataShowHot.number"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </i-dialog>
   </div>
@@ -191,6 +193,7 @@ export default {
           func: () => {
             this.dialogVisibleShowHot = true
             req('findNum', {}).then(data => {
+              console.log(data)
               this.formDataShowHot = data.data
             })
           }
@@ -213,8 +216,9 @@ export default {
       ],
       tableSelectRows: [],
       showHotFormRules: {
-        hotGoodsShowNum: [
-          {required: true, message: '请输入活动名称', trigger: 'change'}
+        number: [
+          {required: true, message: '请输入活动名称', trigger: 'change'},
+          {type: 'number', message: '输入为数字'}
         ]
       }
     }
@@ -247,21 +251,38 @@ export default {
       this.dialogVisibleShowHot = false
     },
     dialogComfirmShowHot () {
-      this.$refs.hotform.validate((valid) => {
+      // this.$refs.hotform.validate((valid) => {
+      //   if (valid) {
+      //     console.log('表单被校验了')
+      //     if (this.dialogType === 'Number') {
+      //       req('updateHotGoodsNumber', {...this.formDataShowHot}).then(data => {
+      //         if (data.code === 0) {
+      //           this.$message.success(data.msg)
+      //           this.fetch()
+      //           this.$refs.form.resetFields()
+      //           this.dialogVisibleShowHot = false
+      //         } else {
+      //           this.$message.error(data.msg)
+      //         }
+      //       })
+      //     }
+      //   } else {
+      //     return false
+      //   }
+      // })
+      this.$refs.hotForm.validate((valid) => {
         if (valid) {
-          console.log('表单被校验了')
-          if (this.dialogType === 'Number') {
-            req('updateHotGoodsNumber', {...this.formDataShowHot}).then(data => {
-              if (data.code === 0) {
-                this.$message.success(data.msg)
-                this.fetch()
-                this.$refs.form.resetFields()
-                this.dialogVisibleShowHot = false
-              } else {
-                this.$message.error(data.msg)
-              }
-            })
-          }
+          req('updateHotGoodsNumber', {...this.formDataShowHot}).then(data => {
+            if (data.code === 0) {
+              this.$message.success(data.msg)
+
+              this.fetch()
+              this.$refs.hotForm.resetFields()
+              this.hotDialogVisible = false
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
         } else {
           return false
         }

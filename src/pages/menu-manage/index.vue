@@ -39,7 +39,7 @@
           <div>{{menuDetail.menuDetailRoute}}</div>
         </div>
         <div>
-          <span>菜单路由</span>
+          <span>菜单</span>
           <div>{{menuDetail.menuDetailisMenu}}</div>
         </div>
         <div>

@@ -1,310 +1,335 @@
 <template>
-  <div class="comm-classify">
-    <div class="comm-classify-menu">
-      <div class="comm-classify-btnlist">
-        <el-button
-          v-for="(item, index) in toolbar"
-          :key="index"
-          :type="item.type"
-          @click="item.func">
-          {{ item.btnName }}
-        </el-button>
-      </div>
-      <div class="comm-classify-list">
-        <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-      </div>
-    </div>
-    <div class="comm-classify-info">
-      <div class="comm-classify-title">分类详情</div>
-      <div class="comm-classify-form">
-        <el-form ref="detailForm" :model="commClassifyFormData" :inline="true" label-width="100px">
+  <div class="menu-manager">
+    <i-detail
+    :toolbarBtn="toolbarBtn"
+    :title="menuTitle"
+    :label-width="labelWidth"
+    :detailFormData="detailFormData"
+    widt="200px"
+    class="i-detail">
+      <el-tree
+      slot="menu"
+      :data="data"
+      :props="defaultProps"
+      ref="data"
+      @node-click="handleNodeClick">
+      </el-tree>
+        <!-- 分类详情 -->
+      <el-row>
+        <el-col :span="12">
           <el-form-item label="分类名称" prop="levelName">
-            <el-input v-model="commClassifyFormData.levelName" :readonly="true"></el-input>
+            <el-input v-model="detailFormData.levelName"></el-input>
           </el-form-item>
+        </el-col>
+        <el-col :span="12">
           <el-form-item label="备注" prop="levelNotes">
-            <el-input v-model="commClassifyFormData.levelNotes" :readonly="true"></el-input>
+            <el-input v-model="detailFormData.levelNotes"></el-input>
           </el-form-item>
-        </el-form>
-      </div>
-    </div>
+      </el-col>
+      </el-row>
+    </i-detail>
+
+       <!-- 新增分类对话框 -->
     <i-dialog
-      v-model="dialogVisible"
-      :title="dialogTitle"
-      :showButton="true"
-      @dialog-cancel="dialogCancel"
-      @dialog-confirm="dialogConfirm"
-      @dialog-before-close="dialogBeforeClose">
-      <el-form :model="dialogFormData" ref="form" :rules="formRules" label-width="25%">
-        <el-row>
-          <el-col :span='12'>
-            <el-form-item label="分类名称" prop="levelName">
-              <el-input v-model="dialogFormData.levelName" placeholder="请输入"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span='12'>
-            <el-form-item label="备注" prop="levelNotes">
-              <el-input v-model="dialogFormData.levelNotes" placeholder="请输入"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
+    v-model="dialogVisible"
+    :title="dialogtitle"
+    @dialog-concel="dialogConcel"
+    @dialog-confirm="dialogConfirm"
+    @dialog-before-close="dialogBeforeclose">
+    <el-form
+    :inline="true"
+    :model="dialogFormData"
+    label-width="100px"
+    :rules="rules"
+    ref="dialogFormData">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="父类编号" prop="parentLevelCode">
+            <el-input v-model="dialogFormData.parentLevelCode" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="分类名称" prop="levelName">
+            <el-input v-model="dialogFormData.levelName" clearable></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="备注" prop="levelNotes" >
+            <el-input v-model="dialogFormData.levelNotes" clearable></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+    </i-dialog>
+
+       <!-- 修改分类对话框 -->
+    <i-dialog
+    v-model="alterclassVisible"
+    :title="alterclasstitle"
+    @dialog-concel="alterclassConcel"
+    @dialog-confirm="alterclassConfirm"
+    @dialog-before-close="alterclassBeforeclose">
+    <el-form
+    :inline="true"
+    :model="alterclassFormData"
+    label-width="100px"
+    :rules="alterclassRules"
+    ref="alterclassFormData">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="分类编码" prop="levelCode">
+            <el-input v-model="alterclassFormData.levelCode" disabled=""></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="分类名称" prop="levelName">
+            <el-input v-model="alterclassFormData.levelName" clearable></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="备注" prop="levelNotes" >
+            <el-input v-model="alterclassFormData.levelNotes" clearable></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="版本号" prop="userId" >
+            <el-input v-model="alterclassFormData.userId" disabled=""></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
     </i-dialog>
   </div>
 </template>
 
 <script>
-import req from '@/api/comm-classify-manage.js'
+import IDetail from '@/components/common/i-detail.vue'
 import IDialog from '@/components/common/i-dialog.vue'
+import req from '@/api/comm-classify-manage.js'
 
 export default {
-  name: 'comm-classify-manage',
+  name: 'comm-classify-mange',
   components: {
+    IDetail,
     IDialog
   },
   data () {
     return {
-      commClassifyFormData: {
-        sortCode: '',
-        sortName: ''
+      data: [],
+      classifyInfo: {
+        levelName: '',
+        levelNotes: ''
       },
-      dialogVisible: false,
-      dialogTitle: '新增菜单',
-      dialogType: '',
-      version: '',
-      sortCode: '',
-      toolbar: [
+      defaultProps: {
+        children: 'secondGoodsLevel',
+        label: 'levelName'
+      },
+      toolbarBtn: [
         {
           btnName: '新增',
           type: 'primary',
           func: () => {
-            this.$confirm('新增一级分类，请点击确定。如果您想新增二级分类，请点击取消，选中一个一级分类，再进行新增！').then(() => {
-              this.dialogTitle = '新增商品分类'
-              this.dialogVisible = true
-              this.dialogType = 'addCommClassify'
-              this.dialogFormData.sortParentCode = this.sortParentCode
-            })
+            this.dialogVisible = true
+            this.dialogFormData.parentLevelCode = this.classifyInfo.levelCode
           }
         },
         {
           btnName: '修改',
           type: 'primary',
           func: () => {
-            if (this.levelCode === '') {
-              this.$message.error('请点击一个需要修改的商品分类！')
-            } else {
-              this.dialogTitle = '修改商品分类信息'
-              this.dialogType = 'editCommClassify'
-              this.dialogVisible = true
-              // this.getUserData()
-            }
+            this.alterclassVisible = true
           }
         },
         {
           btnName: '删除',
           type: 'primary',
           func: () => {
-            // 删除用户接口
-            if (this.levelCode === '') {
-              this.$message.error('请点击需要删除的商品分类，不可多选！')
-            } else {
-              this.$confirm('此操作将永久删除“' + this.commClassifyFormData.levelName + '”分类，是否继续？').then(() => {
-                req('deleteGoodsLevel', {
-                  levelCode: this.levelCode
-                }).then(data => {
-                  // 传给服务器的数据
-                  if (data.code === 0) {
-                    this.search()
-                    this.$message.success(data.msg)
-                  }
-                })
-              })
-            }
-          }
-        },
-        {
-          btnName: '刷新',
-          type: 'primary',
-          func: () => {
-            this.search()
-            this.$refs.detailForm.resetFields()
+            this.remove()
           }
         }
       ],
-      data: [
-      ],
-      defaultProps: {
-        children: 'secondGoodsLevel',
-        label: 'levelName'
-      },
+      menuTitle: '分类详情',
+      detailFormData: {},
+      labelWidth: '80px',
+      dialogVisible: false,
+      alterclassVisible: false,
+      dialogtitle: '新增菜单',
+      alterclasstitle: '修改菜单',
+      // 新增菜单表单数据初始化
       dialogFormData: {
+        parentLevelCode: '',
+        levelName: '',
+        levelNotes: ''
+      },
+      // 修改菜单表单数据初始化
+      alterclassFormData: {
+        parentLevelCode: '',
+        levelCode: '',
         levelName: '',
         levelNotes: '',
-        sortParentCode: ''
+        userId: ''
       },
-      // 存放父编号（新增二级分类时）
-      sortParentCode: '',
-      formRules: {
+      // 新增菜单表单校验
+      rules: {
         levelName: [
-          { required: true, message: '请输入分类名称', trigger: 'blur' }
+          {required: true, message: '请输入分类名称', trigger: 'blur'}
         ]
-      }
+      },
+      // 修改菜单表单校验
+      alterclassRules: {
+        levelName: [
+          {required: true, message: '请输入分类名称', trigger: 'blur'}
+        ]
+      },
+      firstLevelList: {}
     }
-  },
-  computed: {
-  },
-  mounted () {
-    this.search()
   },
   methods: {
-    search () {
-      req('getTableData', {
-      }).then(data => {
-        console.log('商品分类', data)
-        // this.data = this.initData(data.data)
-        if (data.code === 0) {
-          this.$message.success('刷新成功！')
-          this.data = data.data.list
+    getTreeData () {
+      req('getTableData', {}).then(data => {
+        this.data = data.data.list
+        console.log('tree', data)
+      })
+    },
+    // 新增对话框的取消按钮
+    dialogConcel () {
+      this.dialogVisible = false
+      this.classifyInfo = []
+      this.$refs.dialogFormData.resetFields()
+    },
+    // 新增对话框的确定按钮
+    dialogConfirm () {
+      this.$refs.dialogFormData.validate((valid) => {
+        if (valid) {
+          req('saveGoodsLevel', {
+            parentLevelCode: this.classifyInfo.levelCode,
+            levelName: this.dialogFormData.levelName,
+            levelNotes: this.alterclassFormData.levelNotes
+          }).then(data => {
+            console.log('add', data)
+            if (data.code === 0) {
+              this.$message.success(data.msg)
+              this.$refs.dialogFormData.resetFields()
+              this.dialogVisible = false
+              this.classifyInfo = []
+              this.getTreeData()
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
+        } else {
+          return false
+        }
+      })
+      location.reload()
+    },
+    dialogBeforeclose () {
+      // 点开表单时清空旧数据
+      this.$refs.dialogFormData.resetFields()
+    },
+    // 修改对话框的取消按钮
+    alterclassConcel () {
+      // this.$refs.alterclassFormData.resetFields()
+      this.alterclassFormData = []
+      this.alterclassVisible = false
+    },
+    alterclassConfirm () {
+      this.$refs.alterclassFormData.validate((valid) => {
+        if (valid) {
+          if (this.classifyInfo.length === 0) {
+            this.$message.info('请选择目录')
+            return
+          }
+          req('updateGoodsLevel', {
+            ...this.alterclassFormData
+          }).then(data => {
+            console.log('alter', data)
+            if (data.code === 0) {
+              this.$message.success(data.msg)
+              this.$refs.alterclassFormData.resetFields()
+              this.alterclassVisible = false
+              this.getTreeData()
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
+        } else {
+          return false
         }
       })
     },
-    // initData (data) {
-    //   const treeData = JSON.parse(JSON.stringify(data).replace(/levelName|levelName/g, 'label'))
-    //   return treeData
-    // },
-    // 获取分类详情
-    handleNodeClick (data) {
-      // console.log('data', data)
-      this.getClickCommClassifyCode = data
-      if (this.getClickCommClassifyCode.levelCode !== undefined) {
-        req('getLevelDetailData', {
-          levelCode: this.getClickCommClassifyCode.levelCode
-        }).then(data => {
-          // console.log('yiji', data)
-          this.commClassifyFormData.levelName = data.data.levelName
-          this.commClassifyFormData.levelNotes = data.data.levelNotes
-          this.dialogFormData = Object.assign({}, data.data)
-          this.sortParentCode = data.data.levelCode
-          this.version = data.data.version
-          this.levelCode = data.data.levelCode
-        })
+    alterclassBeforeclose () {
+      this.$refs.alterclassFormData.resetFields()
+    },
+    remove () {
+      let code = this.classifyInfo.levelCode
+      console.log('levelCode:', code)
+      if (code === undefined) {
+        this.$message.info('请选择目录或从子类删除')
+        return false
       } else {
-        req('getLevelDetailData', {
-          levelCode: this.getClickCommClassifyCode.levelCode
+        if (this.classifyInfo.secondGoodsLevel.length >= 1) {
+          this.$message.error('请从子类删除')
+          return false
+        }
+        req('deleteGoodsLevel', {
+          levelCode: code
         }).then(data => {
-          // console.log('erji', data)
-          this.commClassifyFormData.levelName = data.data.levelName
-          this.commClassifyFormData.levelNotes = data.data.levelNotes
-          this.dialogFormData = Object.assign({}, data.data)
-          this.levelCode = data.data.levelCode
-          this.version = data.data.version
+          console.log('delete', data)
+          if (data.code === 0) {
+            this.$message.success(data.msg)
+            this.alterclassVisible = false
+            this.getTreeData()
+          } else {
+            this.$message.error(data.msg)
+          }
         })
       }
     },
-    dialogBeforeClose () {
-      this.dialogVisible = false
-      this.$refs.form.resetFields()
-    },
-    dialogCancel () {
-      this.$refs.form.resetFields()
-      this.dialogVisible = false
-    },
-    dialogConfirm () {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          if (this.dialogType === 'addCommClassify') {
-            req('saveGoodsLevel', {
-              ...this.dialogFormData
-            }).then(data => {
-              if (data.code === 0) {
-                this.$message.success(data.msg)
-                this.dialogVisible = false
-                this.search()
-              } else {
-                this.$message.error(data.msg)
-              }
-            })
-          } else if (this.dialogType === 'editCommClassify') {
-            req('updateGoodsLevel', {
-              ...this.dialogFormData,
-              version: this.version,
-              levelCode: this.levelCode
-            }).then(data => {
-              // this.dialogFormData = Object.assign({}, data.data)
-              if (data.code === 0) {
-                this.$message.success(data.msg)
-                this.dialogVisible = false
-                this.search()
-              } else {
-                this.$message.error(data.msg)
-              }
-            })
-          } else {
-            return false
-          }
-        }
+    handleNodeClick (data) {
+      this.classifyInfo = data
+      this.alterclassFormData = this.classifyInfo
+      // this.dialogFormData.parentClassCode = this.classifyInfo.classCode
+      // console.log('classifyInfo:', data)
+      req('getLevelDetailData', {
+        levelCode: this.classifyInfo.levelCode
+      }).then(data => {
+        console.log('classifyInfo0:', data)
+        this.detailFormData = data.data
       })
     }
+  },
+  mounted () {
+    this.getTreeData()
   }
 }
 </script>
 
-<style lang='scss' scoped>
-.comm-classify {
-  width: 1280px;
-  height: 600px;
-  display: flex;
-  .comm-classify-menu {
-    width: 30%;
-    height: 100%;
-    .comm-classify-btnlist {
-      width: 100%;
-      height: 50px;
-      text-align: center;
-      line-height: 50px;
-      border: 1px solid rgb(228, 228, 228);
-      box-sizing: border-box;
-    }
-    .comm-classify-list {
-      width: 100%;
-      height: 500px;
-      text-align: center;
-      border: 1px solid rgb(228, 228, 228);
-      box-sizing: border-box;
-      /deep/ .el-tree {
-        margin: 20px 30px;
-      }
-    }
-  }
-  .comm-classify-info {
-    width: 70%;
-    height: 100%;
-    .comm-classify-title {
-      width: 100%;
-      height: 50px;
-      line-height: 50px;
-      text-align: left;
-      font-size: 20px;
-      border: 1px solid rgb(228, 228, 228);
-      padding-left: 30px;
-      box-sizing: border-box;
-    }
-    .comm-classify-form {
-      width: 100%;
-      height: 500px;
-      border: 1px solid rgb(228, 228, 228);
-      box-sizing: border-box;
-      .el-form {
-        padding-top: 20px;
-        box-sizing: border-box;
-        .el-form-item__label {
-          width: 100px;
-        }
-        .el-form-item__content {
-          .el-input__inner {
-            width: 80%;
+<style lang="scss" scoped>
+.el-main {
+ /deep/ .menu-manager {
+    .i-detail {
+      .el-container {
+         .el-aside {
+          .menuList {
+            width: 300px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            outline: none;
+            border-top: 0px;
+            border-left: 0px;
+            border-right: 0px;
           }
         }
       }
+    }
+  }
+}
+
+.i-dialog {
+  /deep/ .el-dialog__wrapper {
+    .el-dialog {
+      min-width: 660px;
     }
   }
 }

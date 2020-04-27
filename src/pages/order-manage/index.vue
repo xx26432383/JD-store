@@ -103,7 +103,9 @@ export default {
         {label: '已取消', value: 5},
         {label: '已到货', value: 2},
         {label: '已完成未评价', value: 3},
-        {label: '已完成已评价', value: 4}
+        {label: '已完成已评价', value: 4},
+        {label: '全部', value: 0}
+
       ],
       detailVisible: false,
       dialogTitle: '详情',
@@ -215,7 +217,7 @@ export default {
 
               req('updateOrderState', {
                 orderCode: orderIds,
-                orderStatus: 0,
+                orderStatus: 1,
                 version: versions
               }).then(data => {
                 this.$message.success(data.msg)
@@ -345,7 +347,7 @@ export default {
         {label: '订单总价', prop: 'allPrice'},
         {label: '客户编号', prop: 'clientUserCode'},
         {label: '商品姓名', prop: 'goodsName'},
-        {label: '购买数量', prop: 'amout'},
+        {label: '购买数量', prop: 'amount'},
         {label: '售价', prop: 'price'},
         {label: '商品编号', prop: 'goodsCode'}
       ]

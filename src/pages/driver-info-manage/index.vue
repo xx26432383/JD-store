@@ -68,32 +68,32 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="司机姓名" prop="driverName">
-              <el-input v-model="dialogFormData.driverName"></el-input>
+              <el-input v-model="dialogFormData.driverName" placeholder="请输入" :disabled="this.dialogType === 'detail'"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系电话" prop="phone">
-              <el-input v-model.number="dialogFormData.phone"></el-input>
+              <el-input v-model.number="dialogFormData.phone" placeholder="请输入" :disabled="this.dialogType === 'detail'"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="司机账号" prop="driverAcct">
-              <el-input v-model="dialogFormData.driverAcct"></el-input>
+              <el-input v-model="dialogFormData.driverAcct" placeholder="请输入" :disabled="this.dialogType === 'detail'"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="密码" prop="driverPwd">
-              <el-input v-model="dialogFormData.driverPwd"></el-input>
+              <el-input v-model="dialogFormData.driverPwd" placeholder="请输入" :disabled="this.dialogType === 'detail'"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="身份证号" prop="idCard">
-              <el-input v-model="dialogFormData.idCard"></el-input>
+              <el-input v-model="dialogFormData.idCard" placeholder="请输入" :disabled="this.dialogType === 'detail'"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span='12'>
             <el-form-item label="所在省份" prop="provincesNo">
-              <el-select v-model="dialogFormData.provincesNo" @change="getCityData">
+              <el-select v-model="dialogFormData.provincesNo" @change="getCityData" :disabled="this.dialogType === 'detail'">
                 <el-option
                   v-for="(item, index) in dialogProvinceOptions"
                   :key="index"
@@ -105,7 +105,7 @@
           </el-col>
           <el-col :span='12'>
             <el-form-item label="所在城市" prop="cityNo">
-              <el-select v-model="dialogFormData.cityNo" @change="getRegionData">
+              <el-select v-model="dialogFormData.cityNo" @change="getRegionData" :disabled="this.dialogType === 'detail'">
                 <el-option
                   v-for="(item, index) in dialogCityOptions"
                   :key="index"
@@ -117,7 +117,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="所在区域" prop="countyNo">
-              <el-select v-model="dialogFormData.countyNo">
+              <el-select v-model="dialogFormData.countyNo" :disabled="this.dialogType === 'detail'">
                 <el-option
                   v-for="(item, index) in dialogRegionOptions"
                   :key="index"
@@ -161,6 +161,7 @@ export default {
       dialogRegionOptions: [],
 
       formData: {},
+      dialogType: 'add',
       dialogFormData: {},
       dialogVisible: false,
       dialogTitle: '新增司机',
@@ -263,8 +264,7 @@ export default {
           { required: true, message: '请输入', trigger: 'change' }
         ],
         phone: [
-          { required: true, message: '请输入', trigger: 'change' },
-          { type: 'number', message: '联系电话必须为数字' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         driverAcct: [
           { required: true, message: '请输入', trigger: 'change' }

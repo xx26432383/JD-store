@@ -250,7 +250,8 @@ export default {
         {label: '手机号', prop: 'phone'},
         {label: '用户邮箱', prop: 'email'},
         {label: '身份证', prop: 'idCard'},
-        {label: '角色', prop: 'role', distName: 'options'}
+        {label: '角色', prop: 'role', distName: 'options'},
+        {label: '用户编号', prop: 'userCode'}
       ],
       tableData: [],
       tableSelectRows: []
