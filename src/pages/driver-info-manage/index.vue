@@ -250,7 +250,7 @@ export default {
                 return item.driverCode
               }).toString()
 
-              req('deleteDriver', {driverCode: ids}).then(data => {
+              req('deleteDriver', {driverCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
 
                 this.fetch()
@@ -348,6 +348,7 @@ export default {
       req('getTableData', {
         ...this.formData,
         role: JSON.parse(sessionStorage.getItem('roleInfo')).role,
+        userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId,
         pageSize: this.pageInfo.pageSize,
         pageNum: this.pageInfo.pageNum
       }).then(data => {
@@ -394,7 +395,7 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           if (this.dialogType === 'add') {
-            req('addDriver', {...this.dialogFormData}).then(data => {
+            req('addDriver', {...this.dialogFormData, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)
                 this.fetch()
@@ -409,7 +410,7 @@ export default {
               }
             })
           } else {
-            req('updateDriver', {...this.dialogFormData}).then(data => {
+            req('updateDriver', {...this.dialogFormData, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)
                 this.fetch()

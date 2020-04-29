@@ -151,7 +151,8 @@ export default {
             } else {
               this.$confirm('此操作将永久删除“' + this.clickMenuName + '”菜单，是否继续？').then(() => {
                 req('deleteMenu', {
-                  menuCode: this.clickMenuCode
+                  menuCode: this.clickMenuCode,
+                  userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId
                 }).then(data => {
                   // console.log(this.clickMenuCode)
                   // console.log(data)
@@ -204,6 +205,7 @@ export default {
     // 获取菜单列表
     search () {
       req('getTableData', {
+        role: JSON.parse(sessionStorage.getItem('roleInfo')).role,
         ...this.menuList
       }).then(data => {
         console.log(data)
@@ -220,7 +222,8 @@ export default {
           if (this.dialogType === 'addMenu') {
             // console.log('表单校验通过了')
             req('addMenu', {
-              ...this.dialogFormData
+              ...this.dialogFormData,
+              userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId
             }).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)
@@ -234,7 +237,8 @@ export default {
             req('updateMenu', {
               ...this.dialogFormData,
               menuCode: this.clickMenuCode,
-              version: this.clickMenuVersion
+              version: this.clickMenuVersion,
+              userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId
             }).then(data => {
               if (data.code === 0) {
                 // this.created()

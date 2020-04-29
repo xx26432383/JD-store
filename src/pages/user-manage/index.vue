@@ -206,7 +206,8 @@ export default {
               let ids = this.tableSelectRows.map(item => {
                 return item.userCode
               }).toString()
-              req('deletUser', {userCode: ids}).then(data => {
+              req('deletUser', {userCode: ids,
+                userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
                 this.fetch()
                 console.log(ids)
@@ -326,7 +327,8 @@ export default {
         if (valid) {
           // console.log('表单被校验了')
           if (this.dialogType === 'add') {
-            req('addUser', {...this.dialogFormData}).then(data => {
+            req('addUser', {...this.dialogFormData,
+              userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)
                 this.fetch()
@@ -337,7 +339,8 @@ export default {
               }
             })
           } else {
-            req('changeUser', {...this.dialogFormData}).then(data => {
+            req('changeUser', {...this.dialogFormData,
+              userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
               // console.log('111', data)
               if (data.code === 0) {
                 this.$message.success(data.msg)

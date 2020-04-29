@@ -7,8 +7,8 @@
       <el-form-item label="商品名称" prop="userName">
         <el-input v-model="formData.userName"></el-input>
       </el-form-item>
-      <el-form-item label="商品状态" prop="gooodsStats">
-        <el-select v-model="formData.gooodsStats">
+      <el-form-item label="商品状态" prop="goodsStatus">
+        <el-select v-model="formData.goodsStatus">
           <el-option
           v-for="(item, index) in options"
           :key="index"
@@ -158,9 +158,9 @@ export default {
         goodsImage: ''
       },
       options: [
-        // {label: '全部', value: 0},
-        {label: '上架', value: 0},
-        {label: '下架', value: 1}
+        {label: '全部', value: 0},
+        {label: '上架', value: 1},
+        {label: '下架', value: 2}
       ],
       firstLevelList: [
       ],
@@ -216,7 +216,7 @@ export default {
               let ids = this.tableSelectRows.map(item => {
                 return item.goodsCode
               }).toString()
-              req('deletGoods', {goodsCode: ids}).then(data => {
+              req('deletGoods', {goodsCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
                 this.fetch()
               })
@@ -240,7 +240,7 @@ export default {
             //   }).toString()
             //   req('upGoods', {
             //     goodsCode: goodsIds,
-            //     gooodsStats: 0,
+            //     goodsStatus: 1,
             //     version: versions
             //   }).then(data => {
             //     this.$message.success(data.msg)
@@ -255,7 +255,7 @@ export default {
               let ids = this.tableSelectRows.map(item => {
                 return item.goodsCode
               }).toString()
-              req('upGoods', {goodsCode: ids}).then(data => {
+              req('upGoods', {goodsCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
                 this.fetch()
               })
@@ -279,7 +279,7 @@ export default {
             //   }).toString()
             //   req('downGoods', {
             //     goodsCode: goodsIds,
-            //     gooodsStats: 1,
+            //     goodsStatus: 2,
             //     userId: userId
             //   }).then(data => {
             //     this.$message.success(data.msg)
@@ -294,7 +294,7 @@ export default {
               let ids = this.tableSelectRows.map(item => {
                 return item.goodsCode
               }).toString()
-              req('downGoods', {goodsCode: ids}).then(data => {
+              req('downGoods', {goodsCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
                 this.fetch()
               })
@@ -443,7 +443,7 @@ export default {
         if (valid) {
           // console.log('表单被校验了')
           if (this.dialogType === 'add') {
-            req('saveGoods', {...this.dialogFormData}).then(data => {
+            req('saveGoods', {...this.dialogFormData, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)
                 this.fetch()
@@ -457,6 +457,7 @@ export default {
             req('changeGoods', {
               ...this.dialogFormData,
               goodsCode: this.commCode,
+              userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId,
               version: this.commVersion
             }).then(data => {
               // this.dialogFormData = Object.assign({}, data.data)

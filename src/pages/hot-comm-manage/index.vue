@@ -180,24 +180,24 @@ export default {
               let ids = this.tableSelectRows.map(item => {
                 return item.hotCode
               }).toString()
-              req('deleteHotGoos', {hotCode: ids}).then(data => {
+              req('deleteHotGoos', {hotCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
                 this.fetch()
               })
             })
           }
-        },
-        {
-          btnName: '展示数量设置',
-          type: 'primary',
-          func: () => {
-            this.dialogVisibleShowHot = true
-            req('findNum', {}).then(data => {
-              console.log(data)
-              this.formDataShowHot = data.data
-            })
-          }
         }
+        // {
+        //   btnName: '展示数量设置',
+        //   type: 'primary',
+        //   func: () => {
+        //     this.dialogVisibleShowHot = true
+        //     req('findNum', {}).then(data => {
+        //       console.log(data)
+        //       this.formDataShowHot = data.data
+        //     })
+        //   }
+        // }
       ],
       formRules: {
         hotSort: [
@@ -236,6 +236,7 @@ export default {
     search () {
       req('getTableData', {
         ...this.formData,
+        role: JSON.parse(sessionStorage.getItem('roleInfo')).role,
         pageSize: this.pageInfo.pageSize,
         pageNum: this.pageInfo.pageNum
       }).then(data => {
@@ -313,7 +314,7 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           if (this.dialogType === 'add') {
-            req('addHotGoods', {...this.dialogFormData}).then(data => {
+            req('addHotGoods', {...this.dialogFormData, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)
                 this.fetch()
@@ -325,7 +326,7 @@ export default {
             })
           } else {
             delete this.dialogFormData.createTime
-            req('updateHotGoods', {...this.dialogFormData}).then(data => {
+            req('updateHotGoods', {...this.dialogFormData, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
               console.log('111', data)
               if (data.code === 0) {
                 this.$message.success(data.msg)

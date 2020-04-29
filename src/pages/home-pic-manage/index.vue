@@ -186,7 +186,7 @@ export default {
               let ids = this.tableSelectRows.map(item => {
                 return item.bannerCode
               }).toString()
-              req('deleteImageGroup', {bannerCode: ids}).then(data => {
+              req('deleteImageGroup', {bannerCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
                 this.fetch()
               })
@@ -205,7 +205,7 @@ export default {
               let ids = this.tableSelectRows.map(item => {
                 return item.bannerCode
               }).toString()
-              req('startImageGroup', {bannerCode: ids}).then(data => {
+              req('startImageGroup', {bannerCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
                 this.fetch()
               })
@@ -224,7 +224,7 @@ export default {
               let ids = this.tableSelectRows.map(item => {
                 return item.bannerCode
               }).toString()
-              req('stopImageGroup', {bannerCode: ids}).then(data => {
+              req('stopImageGroup', {bannerCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
                 this.fetch()
               })
@@ -332,7 +332,8 @@ export default {
               this.dialogFormData,
               {
                 startTime: moment(this.dialogFormData.startTime).format('YYYY-MM-DD'),
-                stopTime: moment(this.dialogFormData.stopTime).format('YYYY-MM-DD')
+                stopTime: moment(this.dialogFormData.stopTime).format('YYYY-MM-DD'),
+                userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId
               })).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)

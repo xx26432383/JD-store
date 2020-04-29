@@ -91,7 +91,8 @@ export default {
       // console.log(this.formData)
       // 发送请求
       req('getTableData', {
-        ...Object.assign({}, this.formData, {role: JSON.parse(sessionStorage.getItem('roleInfo')).role}),
+        ...Object.assign({}, this.formData, {role: JSON.parse(sessionStorage.getItem('roleInfo')).role,
+          userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}),
         pageSize: this.pageInfo.pageSize,
         pageNum: this.pageInfo.pageNum
       }).then(data => {

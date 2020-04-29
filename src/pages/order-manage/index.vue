@@ -156,6 +156,7 @@ export default {
               req('updateOrderState', {
                 orderCode: orderIds,
                 orderStatus: 5,
+                userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId,
                 version: versions
               }).then(data => {
                 this.$message.success(data.msg)
@@ -187,6 +188,7 @@ export default {
               req('updateOrderState', {
                 orderCode: orderIds,
                 orderStatus: 2,
+                userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId,
                 version: versions
               }).then(data => {
                 this.$message.success(data.msg)
@@ -218,6 +220,7 @@ export default {
               req('updateOrderState', {
                 orderCode: orderIds,
                 orderStatus: 1,
+                userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId,
                 version: versions
               }).then(data => {
                 this.$message.success(data.msg)
@@ -249,6 +252,7 @@ export default {
               req('updateOrderState', {
                 orderCode: orderIds,
                 orderStatus: 3,
+                userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId,
                 version: versions
               }).then(data => {
                 this.$message.success(data.msg)
@@ -280,6 +284,7 @@ export default {
               req('updateOrderState', {
                 orderCode: orderIds,
                 orderStatus: 2,
+                userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId,
                 version: versions
               }).then(data => {
                 this.$message.success(data.msg)
@@ -288,14 +293,14 @@ export default {
               })
             })
           }
-        },
-        {
-          btnName: '导出',
-          type: 'primary',
-          func: () => {
-            console.log(this.pageInfo)
-          }
         }
+        // {
+        //   btnName: '导出',
+        //   type: 'primary',
+        //   func: () => {
+        //     console.log(this.pageInfo)
+        //   }
+        // }
       ],
       formRules: {
         test1: [
@@ -370,6 +375,7 @@ export default {
         payTimeStart: this.formData.payTime[0] ? moment(this.formData.payTime[0]).format('YYYY-MM-DD') : '',
         payTimeEnd: this.formData.payTime[1] ? moment(this.formData.payTime[1]).format('YYYY-MM-DD') : '',
         role: JSON.parse(sessionStorage.getItem('roleInfo')).role,
+        userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId,
         pageSize: this.pageInfo.pageSize,
         pageNum: this.pageInfo.pageNum
       }).then(data => {

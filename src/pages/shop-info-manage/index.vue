@@ -7,8 +7,8 @@
       <el-form-item label="门店编号" prop="storesCode">
         <el-input v-model="formData.storesCode"></el-input>
       </el-form-item>
-      <el-form-item label="店长名称" prop="storesName">
-        <el-input v-model="formData.storesName"></el-input>
+      <el-form-item label="店长名称" prop="storesBossName">
+        <el-input v-model="formData.storesBossName"></el-input>
       </el-form-item>
       <el-form-item label="所在省份" prop="provincesNo">
         <el-select clearable v-model="formData.provincesNo" @change="getCityData">
@@ -188,6 +188,7 @@ export default {
       formData: {
         storesName: '',
         storesCode: '',
+        storesBossName: '',
         role: '',
         provincesNo: '',
         cityNo: '',
@@ -305,7 +306,7 @@ export default {
                 return item.storesCode
               }).toString()
 
-              req('deleteStores', {storesCode: ids}).then(data => {
+              req('deleteStores', {storesCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
 
                 this.fetch()
@@ -428,6 +429,7 @@ export default {
       req('getTableData', {
         ...this.formData,
         role: JSON.parse(sessionStorage.getItem('roleInfo')).role,
+        userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId,
         pageSize: this.pageInfo.pageSize,
         pageNum: this.pageInfo.pageNum
       }).then(data => {
@@ -480,7 +482,7 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           if (this.dialogType === 'add') {
-            req('addStores', {...this.dialogFormData}).then(data => {
+            req('addStores', {...this.dialogFormData, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
               console.log('3', data)
               if (data.code === 0) {
                 this.$message.success(data.msg)
@@ -496,7 +498,7 @@ export default {
               }
             })
           } else {
-            req('updateStores', {...this.dialogFormData}).then(data => {
+            req('updateStores', {...this.dialogFormData, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)
                 this.fetch()

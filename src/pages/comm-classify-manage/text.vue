@@ -43,6 +43,11 @@
     :rules="rules"
     ref="dialogFormData">
       <el-row>
+        <!-- <el-col :span="12">
+          <el-form-item label="父类编号" prop="parentLevelCode">
+            <el-input v-model="dialogFormData.parentLevelCode" disabled></el-input>
+          </el-form-item>
+        </el-col> -->
         <el-col :span="12">
           <el-form-item label="分类名称" prop="levelName">
             <el-input v-model="dialogFormData.levelName" clearable></el-input>
@@ -120,7 +125,7 @@ export default {
           type: 'primary',
           func: () => {
             this.dialogVisible = true
-            this.dialogFormData.isParent = this.classifyInfo.levelCode
+            this.dialogFormData.parentLevelCode = this.classifyInfo.levelCode
           }
         },
         {
@@ -147,17 +152,16 @@ export default {
       alterclasstitle: '修改菜单',
       // 新增菜单表单数据初始化
       dialogFormData: {
-        levelCode: '',
+        // parentLevelCode: '',
         levelName: '',
         levelNotes: ''
       },
       // 修改菜单表单数据初始化
       alterclassFormData: {
+        parentLevelCode: '',
         levelCode: '',
-        // levelCode: '',
         levelName: '',
-        levelNotes: '',
-        version: ''
+        levelNotes: ''
       },
       // 新增菜单表单校验
       rules: {
@@ -170,17 +174,14 @@ export default {
         levelName: [
           {required: true, message: '请输入分类名称', trigger: 'blur'}
         ]
-        // version: [
-        //   {required: true, message: '请输入版本号', trigger: 'blur'}
-        // ]
       },
-      firClassList: {}
+      firstLevelList: {}
     }
   },
   methods: {
     getTreeData () {
       req('getTableData', {}).then(data => {
-        this.data = data.data
+        this.data = data.data.list
         console.log('tree', data)
       })
     },
@@ -194,8 +195,8 @@ export default {
     dialogConfirm () {
       this.$refs.dialogFormData.validate((valid) => {
         if (valid) {
-          req('addClass', {
-            levelCode: this.classifyInfo.levelCode,
+          req('saveGoodsLevel', {
+            parentLevelCode: this.classifyInfo.levelCode,
             levelName: this.dialogFormData.levelName,
             levelNotes: this.alterclassFormData.levelNotes
           }).then(data => {
@@ -223,8 +224,8 @@ export default {
     // 修改对话框的取消按钮
     alterclassConcel () {
       // this.$refs.alterclassFormData.resetFields()
-      this.alterclassFormData = []
       this.alterclassVisible = false
+      this.alterclassFormData = []
     },
     alterclassConfirm () {
       this.$refs.alterclassFormData.validate((valid) => {
@@ -233,7 +234,7 @@ export default {
             this.$message.info('请选择目录')
             return
           }
-          req('updateClass', {
+          req('updateGoodsLevel', {
             ...this.alterclassFormData
           }).then(data => {
             console.log('alter', data)
@@ -256,16 +257,16 @@ export default {
     },
     remove () {
       let code = this.classifyInfo.levelCode
-      console.log('classCode:', code)
+      console.log('levelCode:', code)
       if (code === undefined) {
         this.$message.info('请选择目录或从子类删除')
         return false
       } else {
-        if (this.classifyInfo.secClass.length >= 1) {
+        if (this.classifyInfo.secondGoodsLevel.length >= 1) {
           this.$message.error('请从子类删除')
           return false
         }
-        req('deleteClass', {
+        req('deleteGoodsLevel', {
           levelCode: code
         }).then(data => {
           console.log('delete', data)
@@ -283,11 +284,12 @@ export default {
       this.classifyInfo = data
       this.alterclassFormData = this.classifyInfo
       // this.dialogFormData.parentClassCode = this.classifyInfo.classCode
-      console.log('classifyInfo:', data)
-      req('queryClass', {
+      // console.log('classifyInfo:', data)
+      req('getLevelDetailData', {
         levelCode: this.classifyInfo.levelCode
       }).then(data => {
-        this.detailFormData = this.classifyInfo
+        console.log('classifyInfo0:', data)
+        this.detailFormData = data.data
       })
     }
   },
