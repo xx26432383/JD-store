@@ -1,14 +1,14 @@
 <template>
   <div>
     <i-search ref="iSearch" :model="formData" @search="fetch" @reset="reset">
-      <el-form-item label="客户账号" prop="clientAcct">
-        <el-input v-model="formData.clientAcct"></el-input>
+      <el-form-item label="客户姓名" prop="clientUserName">
+        <el-input v-model="formData.clientUserName"></el-input>
       </el-form-item>
       <el-form-item label="订单编号" prop="orderCode">
         <el-input v-model="formData.orderCode"></el-input>
       </el-form-item>
-      <el-form-item label="客户手机号" prop="phone">
-        <el-input v-model="formData.phone"></el-input>
+      <el-form-item label="客户手机" prop="clientUserPhone">
+        <el-input v-model="formData.clientUserPhone"></el-input>
       </el-form-item>
       <el-form-item label="订单状态" prop="orderStatus">
         <el-select v-model="formData.orderStatus">
@@ -20,7 +20,12 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="付款时间" prop="payTime">
+      <!-- <el-form-item label="付款时间" prop="payTime">
+        <el-date-picker
+          v-model="formData.payTime">
+        </el-date-picker>
+      </el-form-item> -->
+      <!-- <el-form-item label="付款时间" prop="payTime">
         <el-date-picker
           v-model="formData.payTime"
           type="daterange"
@@ -28,7 +33,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期">
         </el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
     </i-search>
 
     <!-- <el-button @click="test">click</el-button> -->
@@ -78,7 +83,7 @@ import ISearch from '@/components/common/i-search.vue'
 import ITable from '@/components/common/i-table.vue'
 import IDialog from '@/components/common/i-dialog.vue'
 import req from '@/api/order-manage.js'
-import moment from 'moment'
+// import moment from 'moment'
 
 export default {
   name: 'order-manage',
@@ -104,7 +109,7 @@ export default {
         {label: '已到货', value: 2},
         {label: '已完成未评价', value: 3},
         {label: '已完成已评价', value: 4},
-        {label: '全部', value: 0}
+        {label: '全部', value: 6}
 
       ],
       detailVisible: false,
@@ -335,8 +340,7 @@ export default {
         {label: '门店编码', prop: 'storesCode'},
         {label: '客户姓名', prop: 'clientUserName'},
         {label: '客户手机号', prop: 'clientUserPhone'},
-        {label: '确认付款时间', prop: 'payTime'},
-        {label: '支付状态', prop: 'payStatus'}
+        {label: '确认付款时间', prop: 'payTime'}
       ],
       tableData: [
       ],
@@ -371,9 +375,14 @@ export default {
     search () {
       this.tableLoading = true
       req('getTableData', {
-        ...this.formData,
-        payTimeStart: this.formData.payTime[0] ? moment(this.formData.payTime[0]).format('YYYY-MM-DD') : '',
-        payTimeEnd: this.formData.payTime[1] ? moment(this.formData.payTime[1]).format('YYYY-MM-DD') : '',
+        clientUserName: this.formData.clientUserName,
+        orderCode: this.formData.orderCode,
+        clientUserPhone: this.formData.clientUserPhone,
+        orderStatus: this.formData.orderStatus,
+        // payTime: moment(this.formData.payTime).format('YYYY-MM-DD HH:mm:ss'),
+        // ...this.formData,
+        // payTimeStart: moment(this.formData.payTime[0]).format('YYYY-MM-DD'),
+        // payTimeEnd: moment(this.formData.payTime[1]).format('YYYY-MM-DD'),
         role: JSON.parse(sessionStorage.getItem('roleInfo')).role,
         userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId,
         pageSize: this.pageInfo.pageSize,

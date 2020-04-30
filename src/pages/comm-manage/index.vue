@@ -103,12 +103,12 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="成本价" prop="costPrice">
-              <el-input v-model.number="dialogFormData.costPrice" placeholder="请输入"></el-input>
+              <el-input v-model="dialogFormData.costPrice" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="售价" prop="price">
-              <el-input v-model.number="dialogFormData.price" placeholder="请输入"></el-input>
+              <el-input v-model="dialogFormData.price" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -328,12 +328,10 @@ export default {
           { required: true, message: '请输入', trigger: 'change' }
         ],
         costPrice: [
-          { required: true, message: '请输入', trigger: 'change' },
-          { type: 'number', message: '商品库存必须为数字' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         price: [
-          { required: true, message: '请输入', trigger: 'change' },
-          { type: 'number', message: '商品库存必须为数字' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         userId: [
           { required: true, message: '请输入', trigger: 'change' }

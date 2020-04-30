@@ -81,8 +81,8 @@ export default {
         total: 0
       },
       goodsStateOptions: [
-        {label: '在售', value: 0},
-        {label: '已下架', value: 1}
+        {label: '在售', value: 1},
+        {label: '已下架', value: 2}
       ],
       tableLoading: false,
       tableSelectRows: [],

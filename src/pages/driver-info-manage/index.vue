@@ -73,7 +73,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系电话" prop="phone">
-              <el-input v-model.number="dialogFormData.phone" placeholder="请输入" :disabled="this.dialogType === 'detail'"></el-input>
+              <el-input v-model="dialogFormData.phone" placeholder="请输入" :disabled="this.dialogType === 'detail'"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">

@@ -69,7 +69,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="手机号" prop="phone">
-              <el-input v-model.number="dialogFormData.phone" placeholder="请输入手机号"></el-input>
+              <el-input v-model="dialogFormData.phone" placeholder="请输入手机号"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -227,8 +227,7 @@ export default {
           { required: true, message: '请输入用户性别', trigger: 'change' }
         ],
         phone: [
-          { required: true, message: '请输入手机号', trigger: 'change' },
-          { type: 'number', message: '电话号码必须为数字' }
+          { required: true, message: '请输入手机号', trigger: 'change' }
         ],
         email: [
           { required: true, message: '请输入用户邮箱', trigger: 'change' }

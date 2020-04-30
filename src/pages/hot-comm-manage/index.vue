@@ -49,7 +49,7 @@
           </el-col> -->
           <el-col :span="19">
             <el-form-item label="热门位排序" prop="hotSort">
-              <el-input v-model.number="dialogFormData.hotSort"></el-input>
+              <el-input v-model="dialogFormData.hotSort"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -90,15 +90,13 @@
       v-model="dialogVisibleShowHot"
       :title="dialogtitleShowHot"
       @dialog-cancel="dialogCancelShowHot"
-      @dialog-comfirm="dialogComfirmShowHot">
-      <el-form ref="hotform" :rules="showHotFormRules" label-width="100px">
-        <el-row>
-          <el-col :span="19">
-            <el-form-item label="展示商品数量" prop="number">
-              <el-input v-model.number="formDataShowHot.number"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
+      @dialog-confirm="dialogComfirm">
+      <el-form ref="hotform" :rules="showHotFormRules" label-width="100px" :model="formDataShowHot">
+        <div class="i-search-div-two">
+          <el-form-item label="展示商品数量" prop="number">
+            <el-input v-model="formDataShowHot.number"></el-input>
+          </el-form-item>
+        </div>
       </el-form>
     </i-dialog>
   </div>
@@ -123,16 +121,15 @@ export default {
     return {
       formData: {},
       dialogFormData: {},
+      formDataShowHot: {},
       options: [
 
       ],
+      dialogVisibleShowHot: false,
       innerVisible: false,
       dialogVisible: false,
+      dialogtitleShowHot: '数量设置',
       dialogTitle: '新增热门位商品',
-      dialogtitleShowHot: '展示热门商品数量设置',
-      dialogVisibleShowHot: false,
-      formDataShowHot: {
-      },
       pageInfo: {
         pageNum: 1,
         pageSize: 5,
@@ -186,23 +183,28 @@ export default {
               })
             })
           }
+        },
+        {
+          btnName: '展示数量设置',
+          type: 'primary',
+          func: () => {
+            this.dialogVisibleShowHot = true
+            this.dialoghotType = 'hot'
+            req('findNum', {}).then(data => {
+              this.dialogFormData = Object.assign({}, data.data)
+            })
+          }
         }
-        // {
-        //   btnName: '展示数量设置',
-        //   type: 'primary',
-        //   func: () => {
-        //     this.dialogVisibleShowHot = true
-        //     req('findNum', {}).then(data => {
-        //       console.log(data)
-        //       this.formDataShowHot = data.data
-        //     })
-        //   }
-        // }
       ],
       formRules: {
         hotSort: [
-          { required: true, message: '请输入', trigger: 'change' },
-          { type: 'number', message: '排序必须为数字' }
+          { required: true, message: '请输入', trigger: 'change' }
+        ]
+      },
+      dialoghotType: 'hot',
+      showHotFormRules: {
+        number: [
+          { required: true, message: '请输入', trigger: 'change' }
         ]
       },
       columnList: [
@@ -214,13 +216,7 @@ export default {
       ],
       tableData: [
       ],
-      tableSelectRows: [],
-      showHotFormRules: {
-        number: [
-          {required: true, message: '请输入活动名称', trigger: 'change'},
-          {type: 'number', message: '输入为数字'}
-        ]
-      }
+      tableSelectRows: []
     }
   },
   mounted () {
@@ -247,48 +243,6 @@ export default {
         this.pageInfo.total = data.data.total
       })
     },
-    dialogCancelShowHot () {
-      this.$refs.hotform.resetFields()
-      this.dialogVisibleShowHot = false
-    },
-    dialogComfirmShowHot () {
-      // this.$refs.hotform.validate((valid) => {
-      //   if (valid) {
-      //     console.log('表单被校验了')
-      //     if (this.dialogType === 'Number') {
-      //       req('updateHotGoodsNumber', {...this.formDataShowHot}).then(data => {
-      //         if (data.code === 0) {
-      //           this.$message.success(data.msg)
-      //           this.fetch()
-      //           this.$refs.form.resetFields()
-      //           this.dialogVisibleShowHot = false
-      //         } else {
-      //           this.$message.error(data.msg)
-      //         }
-      //       })
-      //     }
-      //   } else {
-      //     return false
-      //   }
-      // })
-      this.$refs.hotForm.validate((valid) => {
-        if (valid) {
-          req('updateHotGoodsNumber', {...this.formDataShowHot}).then(data => {
-            if (data.code === 0) {
-              this.$message.success(data.msg)
-
-              this.fetch()
-              this.$refs.hotForm.resetFields()
-              this.hotDialogVisible = false
-            } else {
-              this.$message.error(data.msg)
-            }
-          })
-        } else {
-          return false
-        }
-      })
-    },
     reset () {
       this.fetch()
     },
@@ -305,6 +259,32 @@ export default {
     },
     dialogBeforeClose () {
       this.$refs.form.resetFields()
+    },
+    dialogCancelShowHot () {
+      this.$refs.hotform.resetFields()
+      this.dialogVisibleShowHot = false
+    },
+    dialogComfirm () {
+      this.$refs.hotform.validate((valid) => {
+        if (valid) {
+          if (this.dialoghotType === 'hot') {
+            req('updateHotGoodsNumber', {...this.formDataShowHot,
+              userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
+              console.log('rm', data)
+              if (data.code === 0) {
+                this.$message.success(data.msg)
+                this.fetch()
+                this.$refs.hotform.resetFields()
+                this.dialogVisible = false
+              } else {
+                this.$message.error(data.msg)
+              }
+            })
+          }
+        } else {
+          return false
+        }
+      })
     },
     dialogCancel () {
       this.$refs.form.resetFields()
