@@ -178,12 +178,12 @@ export default {
       dialogProvinceOptions: [{provincesName: '', provincesNo: ''}],
 
       // 市
-      cityOptions: [],
-      dialogCityOptions: [],
+      cityOptions: [{cityName: '', cityNo: ''}],
+      dialogCityOptions: [{cityName: '', cityNo: ''}],
 
       // 区
-      regionOptions: [],
-      dialogRegionOptions: [],
+      regionOptions: [{countyName: '', countyNo: ''}],
+      dialogRegionOptions: [{countyName: '', countyNo: ''}],
 
       formData: {
         storesName: '',
@@ -242,6 +242,7 @@ export default {
             this.dialogType = 'detail'
             this.dialogTitle = '查看门店详情'
             req('findStoresById', {storesCode: this.tableSelectRows[0].storesCode}).then(data => {
+              console.log('xq', data)
               Promise.all([
                 this.getCityData(data.data.provincesNo),
                 this.getRegionData(data.data.cityNo)
@@ -377,6 +378,8 @@ export default {
     this.search()
     this.selectProvinces()
     this.fetch()
+  },
+  watch: {
   },
   methods: {
     detailDialogCancel () {

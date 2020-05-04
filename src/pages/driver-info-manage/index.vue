@@ -83,7 +83,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="密码" prop="driverPwd">
-              <el-input v-model="dialogFormData.driverPwd" placeholder="请输入" :disabled="this.dialogType === 'detail'"></el-input>
+              <el-input type="password" v-model="dialogFormData.driverPwd" placeholder="请输入" :disabled="this.dialogType === 'detail'"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -127,6 +127,11 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="图片" prop="image">
+              <i-file v-model="dialogFormData.image"></i-file>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
     </i-dialog>
@@ -138,13 +143,15 @@ import ISearch from '@/components/common/i-search.vue'
 import ITable from '@/components/common/i-table.vue'
 import IDialog from '@/components/common/i-dialog.vue'
 import req from '@/api/driver-info-manage.js'
+import IFile from '@/components/common/i-file.vue'
 
 export default {
   name: 'driver-info-manage',
   components: {
     ISearch,
     ITable,
-    IDialog
+    IDialog,
+    IFile
   },
   data () {
     return {
@@ -153,16 +160,31 @@ export default {
       dialogProvinceOptions: [{provincesName: '', provincesNo: ''}],
 
       // 市
-      cityOptions: [],
-      dialogCityOptions: [],
+      cityOptions: [{cityName: '', cityNo: ''}],
+      dialogCityOptions: [{cityName: '', cityNo: ''}],
 
       // 区
-      regionOptions: [],
-      dialogRegionOptions: [],
+      regionOptions: [{countyName: '', countyNo: ''}],
+      dialogRegionOptions: [{countyName: '', countyNo: ''}],
 
-      formData: {},
+      formData: {
+        driverName: '',
+        driverCode: '',
+        provincesNo: '',
+        cityNo: '',
+        countyNo: ''
+      },
       dialogType: 'add',
-      dialogFormData: {},
+      dialogFormData: {
+        driverName: '',
+        phone: '',
+        driverAcct: '',
+        driverPwd: '',
+        provincesNo: '',
+        cityNo: '',
+        countyNo: '',
+        idCard: ''
+      },
       dialogVisible: false,
       dialogTitle: '新增司机',
       pageInfo: {
@@ -302,6 +324,7 @@ export default {
     // this.pageInfo.total = this.tableData.length
     this.search()
     this.selectProvinces()
+    this.fetch()
   },
   methods: {
     selectProvinces () {

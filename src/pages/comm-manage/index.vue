@@ -4,8 +4,8 @@
       <el-form-item label="商品名称" prop="goodsName">
         <el-input v-model="formData.goodsName"></el-input>
       </el-form-item>
-      <el-form-item label="商品名称" prop="userName">
-        <el-input v-model="formData.userName"></el-input>
+      <el-form-item label="广告词" prop="advertisement">
+        <el-input v-model="formData.advertisement"></el-input>
       </el-form-item>
       <el-form-item label="商品状态" prop="goodsStatus">
         <el-select v-model="formData.goodsStatus">
@@ -409,7 +409,12 @@ export default {
       req('getGoodsDetailData', {
         goodsCode: this.commCode
       }).then(data => {
-        this.dialogFormData = Object.assign({}, data.data)
+        Promise.all([
+          this.getCityData(data.data.provincesNo),
+          this.getRegionData(data.data.cityNo)
+        ]).then(dataList => {
+          this.dialogFormData = Object.assign({}, data.data)
+        })
       })
     },
     reset () {

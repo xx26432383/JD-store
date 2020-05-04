@@ -93,9 +93,18 @@
       @dialog-confirm="dialogComfirm">
       <el-form ref="hotform" :rules="showHotFormRules" label-width="100px" :model="formDataShowHot">
         <div class="i-search-div-two">
-          <el-form-item label="展示商品数量" prop="number">
-            <el-input v-model="formDataShowHot.number"></el-input>
-          </el-form-item>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="原数量">
+                {{this.formDataShowHot[0]}}
+              </el-form-item>
+            </el-col>
+            <el-col :span="16">
+              <el-form-item label="展示商品数量" prop="number" label-width="110px">
+                <el-input v-model="formDataShowHot.number"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </div>
       </el-form>
     </i-dialog>
@@ -191,7 +200,9 @@ export default {
             this.dialogVisibleShowHot = true
             this.dialoghotType = 'hot'
             req('findNum', {}).then(data => {
-              this.dialogFormData = Object.assign({}, data.data)
+              console.log('sl', data)
+              this.formDataShowHot = Object.assign({}, data.data)
+              // console.log('2', this.formDataShowHot)
             })
           }
         }
@@ -275,7 +286,7 @@ export default {
                 this.$message.success(data.msg)
                 this.fetch()
                 this.$refs.hotform.resetFields()
-                this.dialogVisible = false
+                this.dialogVisibleShowHot = false
               } else {
                 this.$message.error(data.msg)
               }
