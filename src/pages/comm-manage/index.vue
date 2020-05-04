@@ -409,12 +409,7 @@ export default {
       req('getGoodsDetailData', {
         goodsCode: this.commCode
       }).then(data => {
-        Promise.all([
-          this.getCityData(data.data.provincesNo),
-          this.getRegionData(data.data.cityNo)
-        ]).then(dataList => {
-          this.dialogFormData = Object.assign({}, data.data)
-        })
+        this.dialogFormData = Object.assign({}, data.data)
       })
     },
     reset () {
