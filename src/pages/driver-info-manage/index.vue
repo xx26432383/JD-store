@@ -209,6 +209,7 @@ export default {
             this.dialogType = 'detail'
             this.dialogTitle = '查看司机详情'
             req('getDriverDetailData', {driverCode: this.tableSelectRows[0].driverCode}).then(data => {
+              console.log('xq', data)
               Promise.all([
                 this.getCityData(data.data.provincesNo),
                 this.getRegionData(data.data.cityNo)
@@ -246,6 +247,7 @@ export default {
             this.dialogType = 'edit'
             this.dialogTitle = '修改司机'
             req('getDriverDetailData', {driverCode: this.tableSelectRows[0].driverCode}).then(data => {
+              console.log('123', data)
               Promise.all([
                 this.getCityData(data.data.provincesNo),
                 this.getRegionData(data.data.cityNo)
@@ -345,6 +347,8 @@ export default {
         this.dialogCityOptions = data.data
         this.formData.cityNo = ''
         this.formData.countyNo = ''
+        // this.dialogFormData.cityName = ''
+        // this.dialogFormData.countyName = ''
       })
     },
     getRegionData (data) {
@@ -357,6 +361,7 @@ export default {
         this.regionOptions = data.data
         this.dialogRegionOptions = data.data
         this.formData.countyNo = ''
+        // this.dialogFormData.countyName = ''
       })
     },
 

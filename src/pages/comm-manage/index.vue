@@ -361,6 +361,8 @@ export default {
   mounted () {
     this.pageInfo.total = this.tableData.length
     this.fetch()
+    this.search()
+    // this.getFirstSortCode ()
   },
   methods: {
     fetch () {
@@ -406,10 +408,20 @@ export default {
     },
     // 修改列表时，选中商品，通过商品编号获取此商品的详细信息
     getCommData () {
-      req('getGoodsDetailData', {
-        goodsCode: this.commCode
-      }).then(data => {
-        this.dialogFormData = Object.assign({}, data.data)
+      // req('getGoodsDetailData', {
+      //   goodsCode: this.commCode
+      // }).then(data => {
+      //   this.dialogFormData = Object.assign({}, data.data)
+      // })
+      req('getGoodsDetailData', {goodsCode: this.tableSelectRows[0].goodsCode}).then(data => {
+        console.log('xq', data)
+        Promise.all([
+          this.getSecondSortCode(data.data.firstLevelCode)
+        ]).then(dataList => {
+          this.dialogFormData = Object.assign({}, data.data, {
+            imagePath: data.data.userImage
+          })
+        })
       })
     },
     reset () {

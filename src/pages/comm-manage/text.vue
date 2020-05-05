@@ -7,13 +7,10 @@
       <el-form-item label="广告词" prop="advertisement">
         <el-input v-model="formData.advertisement"></el-input>
       </el-form-item>
-      <el-form-item label="作者" prop="write">
-        <el-input v-model="formData.write"></el-input>
-      </el-form-item>
-      <el-form-item label="商品状态" prop="gooodsStats">
-        <el-select clearable v-model="formData.gooodsStats">
+      <el-form-item label="商品状态" prop="goodsStatus">
+        <el-select clearable v-model="formData.goodsStatus">
           <el-option
-            v-for="(item, index) in goodsStateOptions"
+            v-for="(item, index) in options"
             :key="index"
             :label="item.label"
             :value="item.value">
@@ -64,41 +61,43 @@
           <el-col :span='12'>
             <el-form-item label="一级分类" prop="firstLevelCode">
               <el-select v-model="dialogFormData.firstLevelCode"
-              @focus="getFirstSortCode"
-              placeholder="请选择" width="206px"
-              @change="getSecondSortCode(dialogFormData.firstLevelCode)">
-              <el-option v-for="(item, index) in firstLevelList"
-                :key="index"
-                :label="item.levelName"
-                :value="item.levelCode">
-              </el-option>
-            </el-select>
+              @change="getSecondSortCode(dialogFormData.firstLevelCode)"
+              @focus="getFirstSortCode">
+                <el-option
+                  v-for="(item, index) in firstLevelList"
+                  :key="index"
+                  :label="item.levelName"
+                  :value="item.levelCode">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span='12'>
             <el-form-item label="二级分类" prop="secondLevelCode">
-              <el-select v-model="dialogFormData.secondLevelCode" placeholder="请选择" width="206px">
-              <el-option v-for="(item, index) in secondLevelList"
-                :key="index"
-                :label="item.levelName"
-                :value="item.levelCode">
-              </el-option>
-            </el-select>
+              <el-select v-model="dialogFormData.secondLevelCode">
+                <el-option
+                  v-for="(item, index) in secondLevelList"
+                  :key="index"
+                  :label="item.levelName"
+                  :value="item.levelCode">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span='12'>
+             <el-col :span="12">
             <el-form-item label="广告词" prop="advertisement">
-              <el-input v-model="dialogFormData.advertisement" placeholder="请输入"></el-input>
+              <el-input type="textarea" v-model="dialogFormData.advertisement" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span='12'>
+          <el-col :span="12">
             <el-form-item label="商品介绍" prop="goodsNotes">
-              <el-input v-model="dialogFormData.goodsNotes" placeholder="请输入"></el-input>
+              <el-input type="textarea" v-model="dialogFormData.goodsNotes" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="商家名" prop="shopName">
-              <el-input v-mode="dialogFormData.shopName" placeholder="请输入"></el-input>
+              <el-input v-model="dialogFormData.shopName" placeholder="请输入"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -148,16 +147,13 @@ export default {
       tableLoading: false,
       formData: {
         goodsName: '',
-        advertisement: '',
-        write: ''
+        advertisement: ''
       },
-      commCode: '',
-      clickSortCode: '',
       firstLevelList: [],
       secondLevelList: [],
       dialogFormData: {
         goodsName: '',
-        bookId: '',
+        bookCode: '',
         firstLevelCode: '',
         secondLevelCode: '',
         advertisement: '',
@@ -189,27 +185,18 @@ export default {
           btnName: '修改',
           type: 'primary',
           func: () => {
-            // if (this.tableSelectRows.length === 0) {
-            //   this.$message.error('请勾选一个需要修改的商品！')
-            // } else if (this.tableSelectRows.length === 1) {
-            //   this.dialogTitle = '修改商品信息'
-            //   this.dialogType = 'edit'
-            //   this.dialogVisible = true
-            //   this.commCode = this.tableSelectRows[0].goodsCode
-            //   // console.log(this.commCode)
-            //   // console.log(this.commVersion)
-            //   this.getCommData()
-            // } else {
-            //   this.$message.error('一次只能勾选一个需要修改的商品！')
-            // }
             if (this.tableSelectRows.length === 0) {
               this.$message.info('请选择需要修改的数据')
+
               return
             }
+
             if (this.tableSelectRows.length > 1) {
               this.$message.info('当前不支持批量修改数据')
+
               return
             }
+
             this.dialogVisible = true
             this.dialogType = 'edit'
             this.dialogTitle = '修改商品'
@@ -250,27 +237,15 @@ export default {
           type: 'primary',
           func: () => {
             if (this.tableSelectRows.length === 0) {
-              this.$message.info('请选择需要修改的数据')
-
+              this.$message.info('请选择上架的数据')
               return
             }
-
-            this.$confirm('是否需要将选中的数据进行上架?').then(() => {
-              let goodsCodes = this.tableSelectRows.map(item => {
+            this.$confirm('是否继续').then(() => {
+              let ids = this.tableSelectRows.map(item => {
                 return item.goodsCode
               }).toString()
-
-              let versions = this.tableSelectRows.map(item => {
-                return item.version
-              }).toString()
-
-              req('upGoods', {
-                goodsCode: goodsCodes,
-                gooodsStats: 1,
-                version: versions
-              }).then(data => {
+              req('upGoods', {goodsCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
-
                 this.fetch()
               })
             })
@@ -281,34 +256,22 @@ export default {
           type: 'primary',
           func: () => {
             if (this.tableSelectRows.length === 0) {
-              this.$message.info('请选择需要修改的数据')
-
+              this.$message.info('请选择下架的数据')
               return
             }
-
-            this.$confirm('是否需要将选中的数据进行下架?').then(() => {
-              let goodsCodes = this.tableSelectRows.map(item => {
+            this.$confirm('是否继续').then(() => {
+              let ids = this.tableSelectRows.map(item => {
                 return item.goodsCode
               }).toString()
-
-              let versions = this.tableSelectRows.map(item => {
-                return item.version
-              }).toString()
-
-              req('downGoods', {
-                goodsCode: goodsCodes,
-                gooodsStats: 2,
-                version: versions
-              }).then(data => {
+              req('downGoods', {goodsCode: ids, userId: JSON.parse(sessionStorage.getItem('roleInfo')).userId}).then(data => {
                 this.$message.success(data.msg)
-
                 this.fetch()
               })
             })
           }
         }
       ],
-      goodsStateOptions: [
+      options: [
         {label: '全部', value: 0},
         {label: '上架', value: 1},
         {label: '下架', value: 2}
@@ -322,53 +285,56 @@ export default {
         {label: '商品介绍', prop: 'goodsNotes'},
         {label: '商家名称', prop: 'shopName'},
         {label: '库存', prop: 'stock'},
-        {label: '成本价', prop: 'costPrice'}, //, distName: 'goodsStateOptions'
+        {label: '成本价', prop: 'costPrice'},
         {label: '售价', prop: 'price'},
-        {label: '状态', prop: 'goodsStatus', distName: 'goodsStateOptions'},
+        {label: '状态', prop: 'goodsStatus', distName: 'options'},
         {label: '书号', prop: 'bookId'}
       ],
       tableData: [],
       tableSelectRows: [],
       formRules: {
         goodsName: [
-          { required: true, message: '请输入商品名称', trigger: 'change' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         bookId: [
-          { required: true, message: '请输入书号', trigger: 'change' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         firstLevelCode: [
-          { required: true, message: '请选择一级分类', trigger: 'change' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         secondLevelCode: [
-          { required: true, message: '请选择二级分类', trigger: 'change' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         advertisement: [
-          { required: true, message: '请输入广告词', trigger: 'change' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         goodsNotes: [
-          { required: true, message: '请输入商品介绍', trigger: 'change' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         shopName: [
-          { required: true, message: '请输入商家名', trigger: 'change' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         stock: [
-          { required: true, message: '请输入库存', trigger: 'change' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         costPrice: [
-          { required: true, message: '请输入在成本价', trigger: 'change' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
         price: [
-          { required: true, message: '请输入售价', trigger: 'change' }
+          { required: true, message: '请输入', trigger: 'change' }
         ],
-        goodsImage: [
-          { required: true, message: '请输入图片路径', trigger: 'change' }
+        userId: [
+          { required: true, message: '请输入', trigger: 'change' }
         ]
+        // goodsImage: [
+        //   { required: true, message: '请输入', trigger: 'change' }
+        // ]
       }
     }
   },
   mounted () {
-    this.fetch()
     this.search()
+    this.fetch()
   },
   methods: {
     fetch () {
@@ -384,6 +350,7 @@ export default {
         pageSize: this.pageInfo.pageSize,
         pageNum: this.pageInfo.pageNum
       }).then(data => {
+        console.log(data)
         this.tableLoading = false
         this.tableData = data.data.list
         this.pageInfo.pageNum = data.data.pageNum
@@ -400,30 +367,28 @@ export default {
     getFirstSortCode () {
       req('findFirstLevel', {
       }).then(data => {
+        console.log('1', data)
         this.firstLevelList = data.data
-        // this.firstLevelList.firstSortName = data.data.sortName
+        // this.oneClassifyOptions.firstSortName = data.data.sortName
         console.log('一级分类', this.firstLevelList)
       })
     },
     // 传入所选的一级分类编号，并获取二级分类信息
     getSecondSortCode (value) {
       this.clickSortCode = value
+      console.log('va', this.clickSortCode)
       // console.log(this.clickSortCode)
       // 获取二级分类
       req('findSecondLevel', {
         firstLevelCode: this.clickSortCode
       }).then(data => {
+        console.log('2', data)
         this.secondLevelList = data.data
         console.log('二级分类', data)
       })
     },
-    // 修改列表时，选中商品，通过商品编号获取此商品的详细信息
-    // getCommData () {
-    //   req('getGoodsDetailData', {
-    //     goodsCode: this.commCode
-    //   }).then(data => {
-    //     this.dialogFormData = Object.assign({}, data.data)
-    //   })
+    // oneSelectChange (value) {
+    //   this.getClassifyList(value)
     // },
     handleSizeChange (value) {
       this.pageInfo.pageSize = value
@@ -438,11 +403,11 @@ export default {
     },
     dialogBeforeClose () {
       this.$refs.form.resetFields()
-      this.secondLevelList = []
+      this.twoClassifyOptions = []
     },
     dialogCancel () {
       this.$refs.form.resetFields()
-      this.secondLevelList = []
+      this.twoClassifyOptions = []
       this.dialogVisible = false
     },
     dialogConfirm () {
@@ -461,7 +426,7 @@ export default {
               }
             })
           } else {
-            req('changeGoods', {...this.dialogFormData, goodsCode: this.commCode}).then(data => {
+            req('changeGoods', {...this.dialogFormData}).then(data => {
               if (data.code === 0) {
                 this.$message.success(data.msg)
 
